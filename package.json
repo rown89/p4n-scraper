@@ -1,0 +1,23 @@
+{
+  "name": "desktop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "playwright": "^1.30.0",
+    "puppeteer": "^19.7.1",
+    "queue-promise": "^2.2.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.30.0",
+    "prettier": "^2.8.4",
+    "supabase": "^1.38.7"
+  }
+}
