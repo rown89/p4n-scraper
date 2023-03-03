@@ -7,8 +7,8 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const handleResults = async (id, db, updateValue) => {
   const { data, error } = await supabase.from(db).update(updateValue).eq('place_id', id);
-  if (error) console.log('error', error);
-  if (data) console.log('data', data);
+  if (error) console.log('error:', error);
+  if (data) console.log('data:', data);
 };
 
 export const getTitle = async (page: Page, id: string) => {
@@ -17,7 +17,6 @@ export const getTitle = async (page: Page, id: string) => {
   const title = plainTitle?.[0];
 
   if (title) handleResults(id, 'places', { title });
-  console.log('getTitle\n', title);
 };
 
 export const getImages = async (page: Page, id: string) => {
@@ -53,32 +52,37 @@ export const getContacts = async (page: Page, id: string) => {
     if (plainPhoneNumber) phone_number = plainPhoneNumber;
   }
 
-  console.log(core_right);
-
   handleResults(id, 'places', { email, website, phone_number });
-  console.log('\ngetContacts\n', { email, website, phone_number });
 };
 
 export const getAddress = async (page: Page, id: string) => {
-  const streetAddress = await page.locator('span[itemprop=streetAddress]').innerText();
-  const cap = await page.locator('#window_footer_navigation_adress').innerText();
-  const addressLocality = await page.locator('span[itemprop=addressLocality]').innerText();
-  const addressCountry = await page.locator('span[itemprop=addressCountry]').innerText();
-  // console.log('\ngetAddress\n', streetAddress, cap, addressCountry, addressLocality);
-  return { streetAddress, cap, addressCountry, addressLocality };
+  const containerText = await page.locator('#window_footer_navigation_adress').innerText();
+  const plainAddressCountry = await page.locator('span[itemprop=addressCountry]').innerText();
+
+  const address = await page.locator('span[itemprop=streetAddress]').innerText();
+  const cap = containerText
+    ?.replace(/[^0-9]/g, ' ')
+    ?.split(' ')
+    .filter((e) => e !== '')
+    ?.filter((e) => e?.length === 5)?.[0];
+  const city = await page.locator('span[itemprop=addressLocality]').innerText();
+  const country =
+    plainAddressCountry?.charAt(0) === ' ' ? plainAddressCountry.substring(1) : plainAddressCountry;
+
+  const results = { address, cap, city, country };
+  handleResults(id, 'places', results);
 };
 
 export const getUsefulInformation = async (page: Page, id: string) => {
-  const openingTime = await page.locator('[name=date_fermeture]')?.inputValue();
+  const opening_time = await page.locator('[name=date_fermeture]')?.inputValue();
   const height_limit = await page.locator('[name=hauteur_limite]')?.inputValue();
   const parking_cost = await page.locator('[name=prix_stationnement]')?.inputValue();
   const price_of_services = await page.locator('[name=prix_services]')?.inputValue();
   const dump_station = await page.locator('[name=borne]')?.inputValue();
   const park_slots = await page.locator('[name=nb_places]')?.inputValue();
 
-  const results = { openingTime, height_limit, parking_cost, price_of_services, dump_station, park_slots };
-  // console.log('\ngetUsefulInformation\n', results);
-  return results;
+  const results = { opening_time, height_limit, parking_cost, price_of_services, dump_station, park_slots };
+  handleResults(id, 'places', results);
 };
 
 export const getServices = async (page: Page, id: string) => {
@@ -120,8 +124,7 @@ export const getServices = async (page: Page, id: string) => {
     gas,
     motorhome_wash,
   };
-  //console.log('\ngetServices\n', results);
-  return results;
+  handleResults(id, 'places', results);
 };
 
 export const getActivities = async (page: Page, id: string) => {
@@ -149,6 +152,5 @@ export const getActivities = async (page: Page, id: string) => {
     point_of_view,
     playground,
   };
-  //console.log('\ngetActivities\n', results);
-  return results;
+  handleResults(id, 'places', results);
 };
