@@ -29,7 +29,11 @@ export const getImages = async (page: Page, id: string) => {
     return data;
   });
   // console.log('\ngetImages\n', images);
-  return images;
+  return images.map(async (img) => {
+    const image = img?.replace('_pt', '_gd');
+    const { data, error } = await supabase.from('places_images').insert([{ place_id: id, url: img }]);
+    if (error) console.log('error:', error);
+  });
 };
 
 export const getContacts = async (page: Page, id: string) => {
