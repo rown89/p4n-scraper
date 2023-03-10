@@ -12,7 +12,7 @@
     "@supabase/supabase-js": "^2.8.0",
     "dotenv": "^16.0.3",
     "playwright": "^1.30.0",
-    "puppeteer": "^19.7.1",
+    "qjobs": "^1.2.0",
     "queue-promise": "^2.2.1"
   },
   "description": "",
