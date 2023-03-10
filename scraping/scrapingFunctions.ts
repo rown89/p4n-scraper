@@ -42,7 +42,7 @@ export const getImages = async (page: Page, id: string) => {
     // console.log('\ngetImages\n', images);
     images.map(async (img) => {
       const image = img?.replace('_pt', '_gd');
-      const { data, error } = await supabase.from('places_images').insert([{ place_id: id, url: img }]);
+      const { data, error } = await supabase.from('places_images').insert([{ place_id: id, url: image }]);
       if (error) console.log('error:', error);
       if (data) return true;
     });
@@ -73,10 +73,13 @@ export const getContacts = async (page: Page, id: string) => {
       if (plainPhoneNumber) phone_number = plainPhoneNumber;
     }
 
+    const updateValues = { email, website, phone_number };
+    for (let k in updateValues) updateValues[k] == '' && delete updateValues[k];
+
     const updateValuesArgs: updateValuesByPlaceIdType = {
       id,
       db: 'places',
-      updateValues: { email, website, phone_number },
+      updateValues,
       event: 'getContacts',
     };
 
@@ -91,27 +94,30 @@ export const getContacts = async (page: Page, id: string) => {
 export const getAddress = async (page: Page, id: string) => {
   try {
     const containerText = await page.locator('#window_footer_navigation_adress').innerText();
-    const plainAddressCountry = await page.locator('span[itemprop=addressCountry]').innerText();
 
-    const address = await page.locator('span[itemprop=streetAddress]').innerText();
-    const cap = containerText
-      ?.replace(/[^0-9]/g, ' ')
-      ?.split(' ')
-      .filter((e) => e !== '')
-      ?.filter((e) => e?.length === 5)?.[0];
-    const city = await page.locator('span[itemprop=addressLocality]').innerText();
-    const country =
-      plainAddressCountry?.charAt(0) === ' ' ? plainAddressCountry.substring(1) : plainAddressCountry;
+    if (containerText) {
+      const plainAddressCountry = await page.locator('span[itemprop=addressCountry]').innerText();
 
-    const updateValuesArgs: updateValuesByPlaceIdType = {
-      id,
-      db: 'places',
-      updateValues: { address, cap, city, country },
-      event: 'getAddress',
-    };
+      const address = await page.locator('span[itemprop=streetAddress]').innerText();
+      const cap = containerText
+        ?.replace(/[^0-9]/g, ' ')
+        ?.split(' ')
+        .filter((e) => e !== '')
+        ?.filter((e) => e?.length === 5)?.[0];
+      const city = await page.locator('span[itemprop=addressLocality]').innerText();
+      const country =
+        plainAddressCountry?.charAt(0) === ' ' ? plainAddressCountry.substring(1) : plainAddressCountry;
 
-    await updateValuesByPlaceId(updateValuesArgs);
-    return true;
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        id,
+        db: 'places',
+        updateValues: { address, cap, city, country },
+        event: 'getAddress',
+      };
+
+      await updateValuesByPlaceId(updateValuesArgs);
+      return true;
+    } else return false;
   } catch (error) {
     console.log(`id: ${id} getImages error\n`, error);
     return false;
@@ -120,33 +126,37 @@ export const getAddress = async (page: Page, id: string) => {
 
 export const getUsefulInformation = async (page: Page, id: string) => {
   try {
-    const opening_time = await page.locator('[name=date_fermeture]')?.inputValue();
-    const height_limit = await page.locator('[name=hauteur_limite]')?.inputValue();
-    const parking_cost = await page.locator('[name=prix_stationnement]')?.inputValue();
-    const price_of_services = await page.locator('[name=prix_services]')?.inputValue();
-    const dump_station = await page.locator('[name=borne]')?.inputValue();
-    const park_slots = await page.locator('[name=nb_places]')?.inputValue();
+    const activitiesContainer = await page.locator('tabs').isVisible();
 
-    const updateValues = {
-      opening_time,
-      height_limit,
-      parking_cost,
-      price_of_services,
-      dump_station,
-      park_slots,
-    };
+    if (activitiesContainer) {
+      const opening_time = await page.locator('[name=date_fermeture]')?.inputValue();
+      const height_limit = await page.locator('[name=hauteur_limite]')?.inputValue();
+      const parking_cost = await page.locator('[name=prix_stationnement]')?.inputValue();
+      const price_of_services = await page.locator('[name=prix_services]')?.inputValue();
+      const dump_station = await page.locator('[name=borne]')?.inputValue();
+      const park_slots = await page.locator('[name=nb_places]')?.inputValue();
 
-    console.log(updateValues);
+      const updateValues = {
+        opening_time,
+        height_limit,
+        parking_cost,
+        price_of_services,
+        dump_station,
+        park_slots,
+      };
 
-    const updateValuesArgs: updateValuesByPlaceIdType = {
-      id,
-      db: 'places',
-      updateValues,
-      event: 'getUsefulInformation',
-    };
+      for (let k in updateValues) updateValues[k] == '' && delete updateValues[k];
 
-    await updateValuesByPlaceId(updateValuesArgs);
-    return true;
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        id,
+        db: 'places',
+        updateValues,
+        event: 'getUsefulInformation',
+      };
+
+      await updateValuesByPlaceId(updateValuesArgs);
+      return true;
+    } else return false;
   } catch (error) {
     console.log(`id: ${id} getUsefulInformation error\n`, error);
     return false;
@@ -155,54 +165,58 @@ export const getUsefulInformation = async (page: Page, id: string) => {
 
 export const getServices = async (page: Page, id: string) => {
   try {
-    // first radio input stand for true
-    const pet_friendly = await page.locator('[name=animaux]')?.first()?.isChecked();
-    const drinking_water = await page.locator('[name=point_eau]')?.first()?.isChecked();
-    const grey_waste_water = await page.locator('[name=eau_usee]')?.first()?.isChecked();
-    const black_waste_water = await page.locator('[name=eau_noire]')?.first()?.isChecked();
-    const trash_can = await page.locator('[name=poubelle]')?.first()?.isChecked();
-    const public_toilette = await page.locator('[name=wc_public]')?.first()?.isChecked();
-    const showers = await page.locator('[name=douche]')?.first()?.isChecked();
-    const bakery = await page.locator('[name=boulangerie]')?.first()?.isChecked();
-    const electricity = await page.locator('[name=electricite]')?.first()?.isChecked();
-    const wifi = await page.locator('[name=wifi]')?.first()?.isChecked();
-    const winter_caravaning = await page.locator('[name=caravaneige]')?.first()?.isChecked();
-    const swimming_pool = await page.locator('[name=piscine]')?.first()?.isChecked();
-    const laundry = await page.locator('[name=laverie]')?.first()?.isChecked();
-    const mobile_connection = await page.locator('[name=donnees_mobile]')?.first()?.isChecked();
-    const gpl = await page.locator('[name=gpl]')?.first()?.isChecked();
-    const gas = await page.locator('[name=gaz]')?.first()?.isChecked();
-    const motorhome_wash = await page.locator('[name=lavage]')?.first()?.isChecked();
+    const activitiesContainer = await page.locator('tabs').isVisible();
 
-    const results = {
-      pet_friendly,
-      drinking_water,
-      grey_waste_water,
-      black_waste_water,
-      trash_can,
-      public_toilette,
-      showers,
-      bakery,
-      electricity,
-      wifi,
-      winter_caravaning,
-      swimming_pool,
-      laundry,
-      mobile_connection,
-      gpl,
-      gas,
-      motorhome_wash,
-    };
+    if (activitiesContainer) {
+      // first radio input stand for true
+      const pet_friendly = await page.locator('[name=animaux]')?.first()?.isChecked();
+      const drinking_water = await page.locator('[name=point_eau]')?.first()?.isChecked();
+      const grey_waste_water = await page.locator('[name=eau_usee]')?.first()?.isChecked();
+      const black_waste_water = await page.locator('[name=eau_noire]')?.first()?.isChecked();
+      const trash_can = await page.locator('[name=poubelle]')?.first()?.isChecked();
+      const public_toilette = await page.locator('[name=wc_public]')?.first()?.isChecked();
+      const showers = await page.locator('[name=douche]')?.first()?.isChecked();
+      const bakery = await page.locator('[name=boulangerie]')?.first()?.isChecked();
+      const electricity = await page.locator('[name=electricite]')?.first()?.isChecked();
+      const wifi = await page.locator('[name=wifi]')?.first()?.isChecked();
+      const winter_caravaning = await page.locator('[name=caravaneige]')?.first()?.isChecked();
+      const swimming_pool = await page.locator('[name=piscine]')?.first()?.isChecked();
+      const laundry = await page.locator('[name=laverie]')?.first()?.isChecked();
+      const mobile_connection = await page.locator('[name=donnees_mobile]')?.first()?.isChecked();
+      const gpl = await page.locator('[name=gpl]')?.first()?.isChecked();
+      const gas = await page.locator('[name=gaz]')?.first()?.isChecked();
+      const motorhome_wash = await page.locator('[name=lavage]')?.first()?.isChecked();
 
-    const updateValuesArgs: updateValuesByPlaceIdType = {
-      id,
-      db: 'places',
-      updateValues: results,
-      event: 'getServices',
-    };
+      const results = {
+        pet_friendly,
+        drinking_water,
+        grey_waste_water,
+        black_waste_water,
+        trash_can,
+        public_toilette,
+        showers,
+        bakery,
+        electricity,
+        wifi,
+        winter_caravaning,
+        swimming_pool,
+        laundry,
+        mobile_connection,
+        gpl,
+        gas,
+        motorhome_wash,
+      };
 
-    await updateValuesByPlaceId(updateValuesArgs);
-    return true;
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        id,
+        db: 'places',
+        updateValues: results,
+        event: 'getServices',
+      };
+
+      await updateValuesByPlaceId(updateValuesArgs);
+      return true;
+    } else return false;
   } catch (error) {
     console.log(`id: ${id} getServices error\n`, error);
     return false;
@@ -211,40 +225,44 @@ export const getServices = async (page: Page, id: string) => {
 
 export const getActivities = async (page: Page, id: string) => {
   try {
-    // first radio input stand for true
-    const monuments = await page.locator('[name=visites]').first().isChecked();
-    const surf_sports = await page.locator('[name=windsurf]').first().isChecked();
-    const mountain_bike = await page.locator('[name=vtt]').first().isChecked();
-    const hikes = await page.locator('[name=rando]').first().isChecked();
-    const climbing = await page.locator('[name=escalade]').first().isChecked();
-    const canoe_kayak = await page.locator('[name=eaux_vives]').first().isChecked();
-    const fishing_spots = await page.locator('[name=peche]').first().isChecked();
-    const swimming = await page.locator('[name=baignade]').first().isChecked();
-    const point_of_view = await page.locator('[name=point_de_vue]').first().isChecked();
-    const playground = await page.locator('[name=jeux_enfants]').first().isChecked();
+    const activitiesContainer = await page.locator('tabs').isVisible();
 
-    const results = {
-      monuments,
-      surf_sports,
-      mountain_bike,
-      hikes,
-      climbing,
-      canoe_kayak,
-      fishing_spots,
-      swimming,
-      point_of_view,
-      playground,
-    };
+    if (activitiesContainer) {
+      // first radio input stand for true
+      const monuments = await page.locator('[name=visites]').first().isChecked();
+      const surf_sports = await page.locator('[name=windsurf]').first().isChecked();
+      const mountain_bike = await page.locator('[name=vtt]').first().isChecked();
+      const hikes = await page.locator('[name=rando]').first().isChecked();
+      const climbing = await page.locator('[name=escalade]').first().isChecked();
+      const canoe_kayak = await page.locator('[name=eaux_vives]').first().isChecked();
+      const fishing_spots = await page.locator('[name=peche]').first().isChecked();
+      const swimming = await page.locator('[name=baignade]').first().isChecked();
+      const point_of_view = await page.locator('[name=point_de_vue]').first().isChecked();
+      const playground = await page.locator('[name=jeux_enfants]').first().isChecked();
 
-    const updateValuesArgs: updateValuesByPlaceIdType = {
-      id,
-      db: 'places',
-      updateValues: results,
-      event: 'getActivities',
-    };
+      const results = {
+        monuments,
+        surf_sports,
+        mountain_bike,
+        hikes,
+        climbing,
+        canoe_kayak,
+        fishing_spots,
+        swimming,
+        point_of_view,
+        playground,
+      };
 
-    await updateValuesByPlaceId(updateValuesArgs);
-    return true;
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        id,
+        db: 'places',
+        updateValues: results,
+        event: 'getActivities',
+      };
+
+      await updateValuesByPlaceId(updateValuesArgs);
+      return true;
+    } else return false;
   } catch (error) {
     console.log(`id: ${id} getActivities error\n`, error);
     return false;

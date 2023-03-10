@@ -21,13 +21,15 @@ export const updateValuesByPlaceId = async ({
     const { data, error } = await supabase.from(db).update(updateValues).eq('place_id', id);
     if (error)
       console.log(
-        `supabase updateValuesByPlaceId error: ${JSON.stringify(error)},
-        \n id: ${id},
-        \n updateValue: ${JSON.stringify(updateValues)},
-        \n event: ${event}`,
+        `\n
+        supabase updateValuesByPlaceId error: ${JSON.stringify(error)},
+        id: ${id},
+        updateValue: ${JSON.stringify(updateValues)},
+        event: ${event}\n
+        `,
       );
     if (data) {
-      console.log('data:', data);
+      console.log('\n', updateValues, 'OK.\n');
       return true;
     }
   } catch (error) {

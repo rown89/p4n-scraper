@@ -19,13 +19,13 @@ const BASE_URL = process.env.BASE_URL;
 
 const queue = new Queue({
   concurrent: 1,
-  interval: 1000,
+  interval: 500,
   start: true,
 });
 
 const dbSaveQueue = new Queue({
   concurrent: 1,
-  interval: 1000,
+  interval: 500,
   start: false,
 });
 
@@ -56,8 +56,8 @@ async function main(id: string) {
   ]);
 }
 
-let range_from = 190;
-let range_to = 300;
+let range_from = 0;
+let range_to = 99;
 
 const stepper = async () => {
   let { data: places, error } = await supabase
@@ -93,5 +93,5 @@ const stepper = async () => {
   dbSaveQueue.on('end', () => console.log('end\n'));
 };
 
-// main('429');
-stepper();
+main('381');
+// stepper();
