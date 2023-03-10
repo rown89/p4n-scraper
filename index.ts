@@ -93,5 +93,5 @@ const stepper = async () => {
   dbSaveQueue.on('end', () => console.log('end\n'));
 };
 
-main('381');
-// stepper();
+//main('381');
+stepper();
