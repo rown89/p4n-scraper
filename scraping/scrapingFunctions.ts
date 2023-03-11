@@ -126,7 +126,7 @@ export const getAddress = async (page: Page, id: string) => {
 
 export const getUsefulInformation = async (page: Page, id: string) => {
   try {
-    const activitiesContainer = await page.locator('tabs').isVisible();
+    const activitiesContainer = await page.locator('.tabs').isVisible();
 
     if (activitiesContainer) {
       const opening_time = await page.locator('[name=date_fermeture]')?.inputValue();
@@ -165,7 +165,7 @@ export const getUsefulInformation = async (page: Page, id: string) => {
 
 export const getServices = async (page: Page, id: string) => {
   try {
-    const activitiesContainer = await page.locator('tabs').isVisible();
+    const activitiesContainer = await page.locator('.tabs').isVisible();
 
     if (activitiesContainer) {
       // first radio input stand for true
@@ -225,7 +225,7 @@ export const getServices = async (page: Page, id: string) => {
 
 export const getActivities = async (page: Page, id: string) => {
   try {
-    const activitiesContainer = await page.locator('tabs').isVisible();
+    const activitiesContainer = await page.locator('.tabs').isVisible();
 
     if (activitiesContainer) {
       // first radio input stand for true

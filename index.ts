@@ -19,13 +19,13 @@ const BASE_URL = process.env.BASE_URL;
 
 const queue = new Queue({
   concurrent: 1,
-  interval: 500,
+  interval: 40,
   start: true,
 });
 
 const dbSaveQueue = new Queue({
-  concurrent: 1,
-  interval: 500,
+  concurrent: 5,
+  interval: 100,
   start: false,
 });
 
@@ -44,7 +44,6 @@ async function main(id: string) {
   queue.enqueue([
     async () => await page.goto(`${BASE_URL}/lieu/${id}/`, { waitUntil: 'networkidle' }),
     async () => data.push(await getTitle(page, id)),
-    async () => data.push(await getImages(page, id)),
     async () => data.push(await getContacts(page, id)),
     async () => data.push(await getAddress(page, id)),
     // PRIVATE AREA
@@ -56,8 +55,8 @@ async function main(id: string) {
   ]);
 }
 
-let range_from = 0;
-let range_to = 99;
+let range_from = 1100;
+let range_to = 1300;
 
 const stepper = async () => {
   let { data: places, error } = await supabase
@@ -93,5 +92,5 @@ const stepper = async () => {
   dbSaveQueue.on('end', () => console.log('end\n'));
 };
 
-//main('381');
+// main('1462');
 stepper();
