@@ -53,10 +53,11 @@ async function main(id: string) {
     async () => getActivities(page, id),
     async () => await browser.close(),
   ]);
+  console.log('main launched.');
 }
 
-let range_from = 1100;
-let range_to = 1300;
+let range_from = 1701;
+let range_to = 1900;
 
 const stepper = async () => {
   let { data: places, error } = await supabase
