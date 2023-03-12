@@ -14,23 +14,13 @@ import Queue from 'queue-promise';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-
 const BASE_URL = process.env.BASE_URL;
-
-const dbSaveQueue = new Queue({
-  concurrent: 1,
-  interval: 80,
-  start: false,
-});
-
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function main(id: string) {
-  const browser = await playwright.chromium.launch({
-    headless: true,
-  });
+  const browser = await playwright.chromium.launch();
   const context = await browser.newContext({ storageState: 'storageState.json' });
   const page = await context.newPage();
 
@@ -44,14 +34,22 @@ async function main(id: string) {
     await getServices(page, id);
     await getActivities(page, id);
     await browser.close();
+
+    return true;
   } catch (error) {
-    console.log('Main error ', error);
+    return { id, error };
   }
 }
 
+const dbSaveQueue = new Queue({
+  concurrent: 6,
+  interval: 20,
+  start: false,
+});
+
 const stepper = async () => {
-  let range_from = 2603;
-  let range_to = 2703;
+  let range_from = 5501;
+  let range_to = 6000;
 
   let { data: places, error } = await supabase
     .from('places')
@@ -80,11 +78,12 @@ const stepper = async () => {
 
   enqueuePlaceList().then(() => dbSaveQueue.start());
 
-  dbSaveQueue.on('dequeue', () => console.log('dequeue'));
-  dbSaveQueue.on('resolve', (data) => data && console.log('resolve', data));
-  dbSaveQueue.on('reject', (error) => error && console.log('reject', error));
-  dbSaveQueue.on('end', () => console.log('end\n'));
+  dbSaveQueue.on('resolve', (data) => console.log('resolve', data));
+  dbSaveQueue.on('reject', (error) => console.log('reject', error));
+  dbSaveQueue.on('end', () => {
+    console.log('end\n');
+  });
 };
 
-// main('4078');
+// main('4698');
 stepper();
