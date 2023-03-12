@@ -17,15 +17,9 @@ dotenv.config();
 
 const BASE_URL = process.env.BASE_URL;
 
-const queue = new Queue({
-  concurrent: 1,
-  interval: 40,
-  start: true,
-});
-
 const dbSaveQueue = new Queue({
-  concurrent: 5,
-  interval: 100,
+  concurrent: 1,
+  interval: 80,
   start: false,
 });
 
@@ -39,27 +33,26 @@ async function main(id: string) {
   });
   const context = await browser.newContext({ storageState: 'storageState.json' });
   const page = await context.newPage();
-  const data = [];
 
-  queue.enqueue([
-    async () => await page.goto(`${BASE_URL}/lieu/${id}/`, { waitUntil: 'networkidle' }),
-    async () => data.push(await getTitle(page, id)),
-    async () => data.push(await getContacts(page, id)),
-    async () => data.push(await getAddress(page, id)),
-    // PRIVATE AREA
-    async () => page.goto(`${BASE_URL}/edition/${id}/`, { waitUntil: 'networkidle' }),
-    async () => getUsefulInformation(page, id),
-    async () => getServices(page, id),
-    async () => getActivities(page, id),
-    async () => await browser.close(),
-  ]);
-  console.log('main launched.');
+  try {
+    await page.goto(`${BASE_URL}/lieu/${id}/`, { waitUntil: 'networkidle' });
+    await getTitle(page, id);
+    await getContacts(page, id);
+    await getAddress(page, id);
+    await page.goto(`${BASE_URL}/edition/${id}/`, { waitUntil: 'networkidle' });
+    await getUsefulInformation(page, id);
+    await getServices(page, id);
+    await getActivities(page, id);
+    await browser.close();
+  } catch (error) {
+    console.log('Main error ', error);
+  }
 }
 
-let range_from = 1701;
-let range_to = 1900;
-
 const stepper = async () => {
+  let range_from = 2603;
+  let range_to = 2703;
+
   let { data: places, error } = await supabase
     .from('places')
     .select('place_id')
@@ -93,5 +86,5 @@ const stepper = async () => {
   dbSaveQueue.on('end', () => console.log('end\n'));
 };
 
-// main('1462');
+// main('4078');
 stepper();

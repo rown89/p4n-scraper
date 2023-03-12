@@ -228,6 +228,7 @@ export const getActivities = async (page: Page, id: string) => {
     const activitiesContainer = await page.locator('.tabs').isVisible();
 
     if (activitiesContainer) {
+      console.log('getActivities');
       // first radio input stand for true
       const monuments = await page.locator('[name=visites]').first().isChecked();
       const surf_sports = await page.locator('[name=windsurf]').first().isChecked();
