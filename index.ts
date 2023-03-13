@@ -1,23 +1,19 @@
 import playwright from 'playwright';
 import fs from 'fs';
-import { createClient } from '@supabase/supabase-js';
 import {
   getTitle,
-  getImages,
   getContacts,
   getAddress,
   getUsefulInformation,
   getServices,
   getActivities,
 } from './scraping';
+import placeIdList from './getPlaceIdList';
 import Queue from 'queue-promise';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 const BASE_URL = process.env.BASE_URL;
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function main(id: string) {
   const browser = await playwright.chromium.launch();
@@ -42,23 +38,13 @@ async function main(id: string) {
 }
 
 const dbSaveQueue = new Queue({
-  concurrent: 6,
-  interval: 20,
+  concurrent: 4,
+  interval: 40,
   start: false,
 });
 
 const stepper = async () => {
-  let range_from = 5501;
-  let range_to = 6000;
-
-  let { data: places, error } = await supabase
-    .from('places')
-    .select('place_id')
-    .order('place_id', { ascending: true })
-    .range(range_from, range_to);
-
-  error && console.log('stepper supabase error', error);
-  const placeList = places.map((i) => i.place_id);
+  const placeList = await placeIdList();
 
   fs.writeFile('lastPlaceList.json', JSON.stringify(placeList), (err) => {
     if (err) {
@@ -82,8 +68,10 @@ const stepper = async () => {
   dbSaveQueue.on('reject', (error) => console.log('reject', error));
   dbSaveQueue.on('end', () => {
     console.log('end\n');
+    return;
   });
 };
 
 // main('4698');
 stepper();
+// placeIdList();
