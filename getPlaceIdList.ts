@@ -21,7 +21,6 @@ const placeIdList = async () => {
     error && console.log('supanbase placeIdList error', error);
 
     const results = places.map((i) => i.place_id);
-    console.log(results);
     return results;
   } catch (error) {
     console.log('placeIdList error', error);

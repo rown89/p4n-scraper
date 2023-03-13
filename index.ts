@@ -1,5 +1,7 @@
 import playwright from 'playwright';
 import fs from 'fs';
+import colors from 'ansi-colors';
+import cliProgress from 'cli-progress';
 import {
   getTitle,
   getContacts,
@@ -14,6 +16,13 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 const BASE_URL = process.env.BASE_URL;
+
+const bar = new cliProgress.SingleBar({
+  format: 'Progress |' + colors.cyan('{bar}') + '| {percentage}% - {value}/{total} Chunks',
+  barCompleteChar: '\u2588',
+  barIncompleteChar: '\u2591',
+  hideCursor: true,
+});
 
 async function main(id: string) {
   const browser = await playwright.chromium.launch();
@@ -31,15 +40,16 @@ async function main(id: string) {
     await getActivities(page, id);
     await browser.close();
 
-    return true;
+    return id;
   } catch (error) {
     return { id, error };
   }
 }
 
+const saveConcurrency = 6;
 const dbSaveQueue = new Queue({
-  concurrent: 4,
-  interval: 40,
+  concurrent: saveConcurrency,
+  interval: 20,
   start: false,
 });
 
@@ -49,7 +59,7 @@ const stepper = async () => {
   fs.writeFile('lastPlaceList.json', JSON.stringify(placeList), (err) => {
     if (err) {
       console.log('fs error ', err);
-    } else console.log('placeList\n', placeList, '\n');
+    }
   });
 
   const enqueuePlaceList = async () => {
@@ -64,10 +74,11 @@ const stepper = async () => {
 
   enqueuePlaceList().then(() => dbSaveQueue.start());
 
-  dbSaveQueue.on('resolve', (data) => console.log('resolve', data));
+  dbSaveQueue.on('start', () => bar.start(placeList?.length, 0));
+  dbSaveQueue.on('resolve', (data) => bar.increment());
   dbSaveQueue.on('reject', (error) => console.log('reject', error));
   dbSaveQueue.on('end', () => {
-    console.log('end\n');
+    bar.stop();
     return;
   });
 };
