@@ -6,9 +6,6 @@
     "start": "ts-node -r dotenv/config index.ts",
     "build:digitalocean": "npm install --production=false && npm run build && npm ci"
   },
-  "engines": {
-    "node": "18.14.2"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
