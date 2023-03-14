@@ -16,9 +16,11 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 const BASE_URL = process.env.BASE_URL;
+let currentId;
 
 const bar = new cliProgress.SingleBar({
-  format: 'Progress |' + colors.cyan('{bar}') + '| {percentage}% - {value}/{total} Chunks',
+  format:
+    'Progress |' + colors.cyan('{bar}') + `| {percentage}% - {value}/{total} Chunks | {duration_formatted}`,
   barCompleteChar: '\u2588',
   barIncompleteChar: '\u2591',
   hideCursor: true,
@@ -46,9 +48,8 @@ async function main(id: string) {
   }
 }
 
-const saveConcurrency = 6;
 const dbSaveQueue = new Queue({
-  concurrent: saveConcurrency,
+  concurrent: 5,
   interval: 20,
   start: false,
 });
@@ -64,9 +65,9 @@ const stepper = async () => {
 
   const enqueuePlaceList = async () => {
     try {
-      await placeList.map((id) => {
+      for await (const id of placeList) {
         dbSaveQueue.enqueue([() => main(id)]);
-      });
+      }
     } catch (error) {
       console.log('enqueuePlaceList error', error);
     }
@@ -75,11 +76,13 @@ const stepper = async () => {
   enqueuePlaceList().then(() => dbSaveQueue.start());
 
   dbSaveQueue.on('start', () => bar.start(placeList?.length, 0));
-  dbSaveQueue.on('resolve', (data) => bar.increment());
+  dbSaveQueue.on('resolve', (data) => {
+    currentId = data;
+    bar.increment();
+  });
   dbSaveQueue.on('reject', (error) => console.log('reject', error));
   dbSaveQueue.on('end', () => {
     bar.stop();
-    return;
   });
 };
 

@@ -93,9 +93,11 @@ export const getContacts = async (page: Page, id: string) => {
 
 export const getAddress = async (page: Page, id: string) => {
   try {
-    const containerText = await page.locator('#window_footer_navigation_adress').innerText();
+    const isContainerTextVisible = await page.locator('#window_footer_navigation_adress').isVisible();
 
-    if (containerText) {
+    if (isContainerTextVisible) {
+      const containerText = await page.locator('#window_footer_navigation_adress').innerText();
+
       const plainAddressCountry = await page.locator('span[itemprop=addressCountry]').innerText();
 
       const address = await page.locator('span[itemprop=streetAddress]').innerText();

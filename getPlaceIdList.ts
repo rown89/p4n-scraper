@@ -20,7 +20,10 @@ const placeIdList = async () => {
 
     error && console.log('supanbase placeIdList error', error);
 
-    const results = places.map((i) => i.place_id);
+    let results = [];
+    for (const { place_id } of places) {
+      results = [...results, place_id];
+    }
     return results;
   } catch (error) {
     console.log('placeIdList error', error);
