@@ -16,7 +16,7 @@ const placeIdList = async () => {
       .from('places')
       .select('place_id')
       .order('place_id', { ascending: true })
-      .range(Number(range_from), Number(range_to));
+      .range(Number(range_from || 0), Number(range_to || 0));
 
     error && console.log('supanbase placeIdList error', error);
 
