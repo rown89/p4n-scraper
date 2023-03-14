@@ -5,6 +5,9 @@
   "scripts": {
     "start": "ts-node -r dotenv/config index.ts"
   },
+  "engines": {
+    "node": "18.14.2"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

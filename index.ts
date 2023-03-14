@@ -64,7 +64,7 @@ const stepper = async () => {
 
   const enqueuePlaceList = async () => {
     try {
-      for await (const id of placeList) {
+      for (const id of placeList) {
         dbSaveQueue.enqueue([() => main(id)]);
       }
     } catch (error) {
