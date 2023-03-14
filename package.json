@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node -r dotenv/config index.ts"
+    "start": "ts-node -r dotenv/config index.ts",
+    "build:digitalocean": "npm install --production=false && npm run build && npm ci"
   },
   "engines": {
     "node": "18.14.2"
