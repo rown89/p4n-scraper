@@ -15,7 +15,8 @@
     "dotenv": "^16.0.3",
     "playwright": "^1.30.0",
     "qjobs": "^1.2.0",
-    "queue-promise": "^2.2.1"
+    "queue-promise": "^2.2.1",
+    "ts-node": "^10.9.1"
   },
   "description": "",
   "devDependencies": {
