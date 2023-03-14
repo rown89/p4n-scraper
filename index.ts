@@ -16,7 +16,6 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 const BASE_URL = process.env.BASE_URL;
-let currentId;
 
 const bar = new cliProgress.SingleBar({
   format:
@@ -77,7 +76,6 @@ const stepper = async () => {
 
   dbSaveQueue.on('start', () => bar.start(placeList?.length, 0));
   dbSaveQueue.on('resolve', (data) => {
-    currentId = data;
     bar.increment();
   });
   dbSaveQueue.on('reject', (error) => console.log('reject', error));
@@ -88,4 +86,3 @@ const stepper = async () => {
 
 // main('4698');
 stepper();
-// placeIdList();
