@@ -50,5 +50,5 @@ export const enqueuePlaceList = async () => {
   }
 };
 
-// enqueuePlaceList();
+enqueuePlaceList();
 // getPlaceIdList(60991, 60991);
