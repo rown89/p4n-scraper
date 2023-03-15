@@ -1,21 +1,11 @@
-import playwright from 'playwright';
+import Queue from 'queue-promise';
 import fs from 'fs';
+import { extractData, getPlaceIdList, updateRange } from './scraping';
 import colors from 'ansi-colors';
 import cliProgress from 'cli-progress';
-import {
-  getTitle,
-  getContacts,
-  getAddress,
-  getUsefulInformation,
-  getServices,
-  getActivities,
-} from './scraping';
-import placeIdList from './getPlaceIdList';
-import Queue from 'queue-promise';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-const BASE_URL = process.env.BASE_URL;
 
 const bar = new cliProgress.SingleBar({
   format:
@@ -25,64 +15,40 @@ const bar = new cliProgress.SingleBar({
   hideCursor: true,
 });
 
-async function main(id: string) {
-  const browser = await playwright.chromium.launch();
-  const context = await browser.newContext({ storageState: 'storageState.json' });
-  const page = await context.newPage();
+export const enqueuePlaceList = async () => {
+  const concurrent = 5;
+  const queue = new Queue({
+    concurrent,
+    interval: 20,
+    start: false,
+  });
+
+  const placeList = await getPlaceIdList();
 
   try {
-    await page.goto(`${BASE_URL}/lieu/${id}/`, { waitUntil: 'networkidle' });
-    await getTitle(page, id);
-    await getContacts(page, id);
-    await getAddress(page, id);
-    await page.goto(`${BASE_URL}/edition/${id}/`, { waitUntil: 'networkidle' });
-    await getUsefulInformation(page, id);
-    await getServices(page, id);
-    await getActivities(page, id);
-    await browser.close();
+    fs.writeFile('lastPlaceList.json', JSON.stringify(placeList), (err) => {
+      if (err) console.log('fs error ', err);
+    });
+    for await (const id of placeList) {
+      queue.enqueue([() => extractData(id?.toString())]);
+    }
 
-    return id;
+    bar.start(placeList?.length, 0);
+    queue.start();
+
+    queue.on('start', () => {});
+    queue.on('resolve', (data) => {
+      bar.increment();
+    });
+    queue.on('reject', (error) => console.log('reject', error));
+    queue.on('end', async () => {
+      bar.stop();
+      await updateRange(3000);
+    });
   } catch (error) {
-    return { id, error };
+    console.log('enqueuePlaceList error', error);
   }
-}
-
-const dbSaveQueue = new Queue({
-  concurrent: 5,
-  interval: 20,
-  start: false,
-});
-
-const stepper = async () => {
-  const placeList = await placeIdList();
-
-  fs.writeFile('lastPlaceList.json', JSON.stringify(placeList), (err) => {
-    if (err) {
-      console.log('fs error ', err);
-    }
-  });
-
-  const enqueuePlaceList = async () => {
-    try {
-      for (const id of placeList) {
-        dbSaveQueue.enqueue([() => main(id)]);
-      }
-    } catch (error) {
-      console.log('enqueuePlaceList error', error);
-    }
-  };
-
-  enqueuePlaceList().then(() => dbSaveQueue.start());
-
-  dbSaveQueue.on('start', () => bar.start(placeList?.length, 0));
-  dbSaveQueue.on('resolve', (data) => {
-    bar.increment();
-  });
-  dbSaveQueue.on('reject', (error) => console.log('reject', error));
-  dbSaveQueue.on('end', () => {
-    bar.stop();
-  });
 };
 
-// main('4698');
-stepper();
+// enqueuePlaceList();
+// getPlaceIdList(60991, 60991);

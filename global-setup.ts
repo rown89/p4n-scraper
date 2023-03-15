@@ -1,6 +1,6 @@
 // global-setup.ts
 import { chromium, FullConfig } from '@playwright/test';
-import login from './login';
+import login from './scraping/login';
 
 const username = process.env.P4N_USERNAME ?? '';
 const password = process.env.P4N_PASSWORD ?? '';

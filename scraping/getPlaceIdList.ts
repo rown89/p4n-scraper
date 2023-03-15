@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import fs from 'fs';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -7,18 +8,21 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const placeIdList = async () => {
-  let range_from = process.env.RANGE_FROM;
-  let range_to = process.env.RANGE_TO;
+export const getPlaceIdList = async (customRangeFrom?: number, customRangeTo?: number) => {
+  const range: { from: number; to: number } = JSON.parse(await fs.promises.readFile('range.json', 'utf-8'));
+
+  let range_from = customRangeFrom || range.from;
+  let range_to = customRangeTo || range.to;
 
   try {
     let { data: places, error } = await supabase
       .from('places')
       .select('place_id')
       .order('place_id', { ascending: true })
-      .range(Number(range_from || 0), Number(range_to || 0));
+      .range(Number(range_from) || 0, Number(range_to) || 0);
 
-    error && console.log('supanbase placeIdList error', error);
+    console.log(places);
+    error && console.log('supanbase getPlaceIdList error', error);
 
     let results = [];
     for (const { place_id } of places) {
@@ -26,8 +30,6 @@ const placeIdList = async () => {
     }
     return results;
   } catch (error) {
-    console.log('placeIdList error', error);
+    console.log('getPlaceIdList error', error);
   }
 };
-
-export default placeIdList;

@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+import fs, { promises } from 'fs';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
@@ -9,6 +10,10 @@ export interface updateValuesByPlaceIdType {
   db: string;
   updateValues: Record<string, any>;
   event?: string;
+}
+
+export interface updateRangeType {
+  to: number;
 }
 
 export const updateValuesByPlaceId = async ({
@@ -28,12 +33,22 @@ export const updateValuesByPlaceId = async ({
         event: ${event}\n
         `,
       );
-    if (data) {
-      console.log('\n', updateValues, 'OK.\n');
-      return true;
-    }
+    if (data) return true;
+    else return false;
   } catch (error) {
     console.log(`\nupdateValuesByPlaceId error`, error);
     return false;
+  }
+};
+
+export const updateRange = async (to: number) => {
+  try {
+    const currentRange: { from: number; to: number } = JSON.parse(
+      await promises.readFile('range.json', 'utf-8'),
+    );
+    const newRange = { from: currentRange.to + 1, to: currentRange.to + to };
+    await promises.writeFile('range.json', JSON.stringify(newRange, null, 1));
+  } catch (error) {
+    console.log('updateRange error', error);
   }
 };
