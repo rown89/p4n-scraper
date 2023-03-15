@@ -23,7 +23,7 @@ export const enqueuePlaceList = async () => {
     start: false,
   });
 
-  const placeList = await getPlaceIdList();
+  const placeList = await getPlaceIdList({});
 
   try {
     fs.writeFile('lastPlaceList.json', JSON.stringify(placeList), (err) => {
@@ -51,4 +51,4 @@ export const enqueuePlaceList = async () => {
 };
 
 enqueuePlaceList();
-// getPlaceIdList(60991, 60991);
+getPlaceIdList({ customRangeFrom: 60991, customRangeTo: 60991 });

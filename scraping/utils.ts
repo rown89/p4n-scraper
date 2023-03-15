@@ -41,7 +41,7 @@ export const updateValuesByPlaceId = async ({
   }
 };
 
-export const updateRange = async (to: number) => {
+export const updateRange = async (to: number): Promise<void> => {
   try {
     const currentRange: { from: number; to: number } = JSON.parse(
       await promises.readFile('range.json', 'utf-8'),

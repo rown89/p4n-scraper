@@ -8,7 +8,15 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const getPlaceIdList = async (customRangeFrom?: number, customRangeTo?: number) => {
+interface getPlaceIdListType {
+  customRangeFrom?: number;
+  customRangeTo?: number;
+}
+
+export const getPlaceIdList = async ({
+  customRangeFrom,
+  customRangeTo,
+}: getPlaceIdListType): Promise<number[]> => {
   const range: { from: number; to: number } = JSON.parse(await fs.promises.readFile('range.json', 'utf-8'));
 
   let range_from = customRangeFrom || range.from;

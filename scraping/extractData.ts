@@ -10,7 +10,7 @@ import {
 
 const BASE_URL = process.env.BASE_URL;
 
-export const extractData = async (id: string) => {
+export const extractData = async (id: string): Promise<string> => {
   const browser = await playwright.chromium.launch();
   const context = await browser.newContext({ storageState: 'storageState.json' });
   const page = await context.newPage();
@@ -28,6 +28,6 @@ export const extractData = async (id: string) => {
 
     return id;
   } catch (error) {
-    return { id, error };
+    console.log('extractData error', id, error);
   }
 };
