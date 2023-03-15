@@ -1,4 +1,3 @@
-// global-setup.ts
 import { chromium, FullConfig } from '@playwright/test';
 import login from './scraping/login';
 

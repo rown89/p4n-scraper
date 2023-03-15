@@ -13,10 +13,9 @@ interface getPlaceIdListType {
   customRangeTo?: number;
 }
 
-export const getPlaceIdList = async ({
-  customRangeFrom,
-  customRangeTo,
-}: getPlaceIdListType): Promise<number[]> => {
+export const getPlaceIdList = async ({ customRangeFrom, customRangeTo }: getPlaceIdListType = {}): Promise<
+  number[]
+> => {
   const range: { from: number; to: number } = JSON.parse(await fs.promises.readFile('range.json', 'utf-8'));
 
   let range_from = customRangeFrom || range.from;

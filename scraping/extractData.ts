@@ -12,7 +12,9 @@ const BASE_URL = process.env.BASE_URL;
 
 export const extractData = async (id: string): Promise<string> => {
   const browser = await playwright.chromium.launch();
-  const context = await browser.newContext({ storageState: 'storageState.json' });
+  const context = await browser.newContext({
+    storageState: 'storageState.json',
+  });
   const page = await context.newPage();
 
   try {
