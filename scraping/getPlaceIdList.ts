@@ -28,7 +28,7 @@ export const getPlaceIdList = async ({ customRangeFrom, customRangeTo }: getPlac
       .order('place_id', { ascending: true })
       .range(Number(range_from) || 0, Number(range_to) || 0);
 
-    console.log(places);
+    if (customRangeFrom || customRangeTo) console.log(places);
     error && console.log('supanbase getPlaceIdList error', error);
 
     let results = [];

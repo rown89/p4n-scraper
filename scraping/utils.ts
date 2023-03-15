@@ -16,12 +16,7 @@ export interface updateRangeType {
   to: number;
 }
 
-export const updateValuesByPlaceId = async ({
-  id,
-  db,
-  updateValues,
-  event,
-}: updateValuesByPlaceIdType): Promise<boolean> => {
+export const updateValuesByPlaceId = async ({ id, db, updateValues, event }: updateValuesByPlaceIdType) => {
   try {
     const { data, error } = await supabase.from(db).update(updateValues).eq('place_id', id);
     if (error)
@@ -41,7 +36,7 @@ export const updateValuesByPlaceId = async ({
   }
 };
 
-export const updateRange = async (to: number): Promise<void> => {
+export const updateRange = async (to: number) => {
   try {
     const currentRange: { from: number; to: number } = JSON.parse(
       await promises.readFile('range.json', 'utf-8'),
