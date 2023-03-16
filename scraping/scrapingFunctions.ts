@@ -1,32 +1,39 @@
 import playwright, { Page } from 'playwright';
 import { createClient } from '@supabase/supabase-js';
-import { updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
+import { isOdd, updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const getTitle = async (page: Page, id: string) => {
-  try {
-    const headerH1 = await page.locator('.header_4 > h1');
-    const plainTitle = await headerH1.allInnerTexts();
-    const title = plainTitle?.[0];
+  const headerH1 = await page.locator('h1')?.isVisible();
+  if (headerH1) {
+    try {
+      const headerH1 = await page.locator('h1');
 
-    const updateValuesArgs: updateValuesByPlaceIdType = {
-      id,
-      db: 'places',
-      updateValues: { title },
-      event: 'getTitle',
-    };
+      const plainTitle = await headerH1.innerText();
+      const title = plainTitle?.replace(/ *\([^)]*\) */g, '')?.substring(0);
 
-    if (title) {
-      await updateValuesByPlaceId(updateValuesArgs);
-      return true;
+      /*
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        id,
+        db: 'places',
+        updateValues: { title },
+        event: 'getTitle',
+      };
+  
+      if (title) {
+        await updateValuesByPlaceId(updateValuesArgs);
+        return true;
+      }
+      */
+    } catch (error) {
+      console.log(`id: ${id} getTitle error\n`, error);
+      return false;
     }
-  } catch (error) {
-    console.log(`id: ${id} getTitle error\n`, error);
-    return false;
   }
+  return;
 };
 
 export const getImages = async (page: Page, id: string) => {
@@ -53,63 +60,66 @@ export const getImages = async (page: Page, id: string) => {
 };
 
 export const getContacts = async (page: Page, id: string) => {
-  try {
-    let email = '';
-    let website = '';
-    let phone_number = '';
+  const actionRows = await page.locator('.place-actions')?.isVisible();
 
-    const core_right = await page.locator('#window_core_right_services > div:nth-child(2) > div > a').all();
+  if (actionRows) {
+    let website;
+    let phone_number;
 
-    for await (const itemlist of core_right) {
-      const href = await itemlist.getAttribute('href');
-      const onclick = await itemlist.getAttribute('onclick');
+    try {
+      const actionRows = await page
+        .locator('.place-actions > .col-3:nth-child(3) > .dropdown:nth-child(1) > ul > li > a')
+        .all();
 
-      const plainEmail = href?.includes('mailto:') && href?.replace('mailto:', '');
-      const plainWebsite = href !== '#' && !href?.includes('mailto:') && href;
-      const plainPhoneNumber = onclick && onclick?.replace("alert('", '')?.replace("');", '');
+      for await (const action of actionRows) {
+        const href = await action.getAttribute('href');
+        const isPhone = href?.includes('tel:');
 
-      if (plainEmail) email = plainEmail;
-      if (plainWebsite) website = plainWebsite;
-      if (plainPhoneNumber) phone_number = plainPhoneNumber;
+        const plainWebsite = !isPhone && href;
+        const plainPhone_number = isPhone && href?.replace('tel:', '');
+
+        if (plainWebsite) website = plainWebsite;
+        if (plainPhone_number) phone_number = plainPhone_number;
+      }
+
+      /*
+        const updateValues = { website, phone_number };
+      for (let k in updateValues) updateValues[k] == '' && delete updateValues[k];
+
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        id,
+        db: 'places',
+        updateValues,
+        event: 'getContacts',
+      };
+
+      await updateValuesByPlaceId(updateValuesArgs); */
+      return true;
+    } catch (error) {
+      console.log(`id: ${id} getContacts error\n`, error);
+      return false;
     }
-
-    const updateValues = { email, website, phone_number };
-    for (let k in updateValues) updateValues[k] == '' && delete updateValues[k];
-
-    const updateValuesArgs: updateValuesByPlaceIdType = {
-      id,
-      db: 'places',
-      updateValues,
-      event: 'getContacts',
-    };
-
-    await updateValuesByPlaceId(updateValuesArgs);
-    return true;
-  } catch (error) {
-    console.log(`id: ${id} getContacts error\n`, error);
-    return false;
   }
+  return;
 };
 
 export const getAddress = async (page: Page, id: string) => {
   try {
-    const isContainerTextVisible = await page.locator('#window_footer_navigation_adress').isVisible();
+    const isContainerTextVisible = await page.locator('.place-info-location').isVisible();
 
     if (isContainerTextVisible) {
-      const containerText = await page.locator('#window_footer_navigation_adress').innerText();
-
-      const plainAddressCountry = await page.locator('span[itemprop=addressCountry]').innerText();
-
-      const address = await page.locator('span[itemprop=streetAddress]').innerText();
+      const containerText = await page.locator('.place-info-location > li:nth-child(2) > p').innerText();
+      const address = containerText?.split('\n')?.[0];
+      const city = containerText?.split('\n')?.[1].split(' ')[1].replace(',', '');
       const cap = containerText
+        ?.split('\n')?.[1]
         ?.replace(/[^0-9]/g, ' ')
         ?.split(' ')
         .filter((e) => e !== '')
         ?.filter((e) => e?.length === 5)?.[0];
-      const city = await page.locator('span[itemprop=addressLocality]').innerText();
-      const country =
-        plainAddressCountry?.charAt(0) === ' ' ? plainAddressCountry.substring(1) : plainAddressCountry;
+      const country = containerText?.split('\n')?.[2]?.substring(1);
 
+      /*
       const updateValuesArgs: updateValuesByPlaceIdType = {
         id,
         db: 'places',
@@ -117,7 +127,8 @@ export const getAddress = async (page: Page, id: string) => {
         event: 'getAddress',
       };
 
-      await updateValuesByPlaceId(updateValuesArgs);
+      await updateValuesByPlaceId(updateValuesArgs); 
+      */
       return true;
     } else return false;
   } catch (error) {
@@ -128,22 +139,43 @@ export const getAddress = async (page: Page, id: string) => {
 
 export const getUsefulInformation = async (page: Page, id: string) => {
   try {
-    const activitiesContainer = await page.locator('.tabs').isVisible();
+    const isInformationsVisible = await page.locator('.place-info-details').isVisible();
 
-    if (activitiesContainer) {
-      const opening_time = await page.locator('[name=date_fermeture]')?.inputValue();
-      const height_limit = await page.locator('[name=hauteur_limite]')?.inputValue();
-      const parking_cost = await page.locator('[name=prix_stationnement]')?.inputValue();
-      const price_of_services = await page.locator('[name=prix_services]')?.inputValue();
-      const dump_station = await page.locator('[name=borne]')?.inputValue();
-      const park_slots = await page.locator('[name=nb_places]')?.inputValue();
+    if (isInformationsVisible) {
+      let opening_time;
+      let height_limit;
+      let parking_cost;
+      let price_of_services;
+      let park_slots;
 
-      const updateValues = {
+      const informationTitle = await page.locator('.place-info-details > dt').all();
+      const informationValue = await page.locator('.place-info-details > dd').all();
+
+      let titles = [];
+      let values = [];
+
+      for await (const key of informationTitle) {
+        titles.push(await key.innerText());
+      }
+
+      for await (const value of informationValue) {
+        values.push(await value.innerText());
+      }
+
+      titles.map((title, i) => {
+        if (title?.includes('Price of services')) price_of_services = values[i];
+        if (title?.includes('Number of places')) park_slots = values[i];
+        if (title?.includes('Open/Closed')) opening_time = values[i];
+        if (title?.includes('Parking cost')) parking_cost = values[i];
+        if (title?.includes('Limited height')) height_limit = values[i]?.replace('m', '');
+      });
+
+      /*
+       const updateValues = {
         opening_time,
         height_limit,
         parking_cost,
         price_of_services,
-        dump_station,
         park_slots,
       };
 
@@ -157,6 +189,7 @@ export const getUsefulInformation = async (page: Page, id: string) => {
       };
 
       await updateValuesByPlaceId(updateValuesArgs);
+      */
       return true;
     } else return false;
   } catch (error) {

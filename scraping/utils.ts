@@ -47,3 +47,7 @@ export const updateRange = async (to: number) => {
     console.log('updateRange error', error);
   }
 };
+
+export const isOdd = (num) => {
+  return num % 2;
+};

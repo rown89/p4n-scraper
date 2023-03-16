@@ -33,8 +33,8 @@ export const enqueuePlaceList = async () => {
       queue.enqueue([() => extractData(id?.toString())]);
     }
 
-    bar.start(placeList?.length, 0);
     queue.start();
+    // bar.start(placeList?.length, 0);
 
     queue.on('start', () => {});
     queue.on('resolve', (data) => {
@@ -43,12 +43,18 @@ export const enqueuePlaceList = async () => {
     queue.on('reject', (error) => console.log('reject', error));
     queue.on('end', async () => {
       bar.stop();
-      await updateRange(3000);
+      // await updateRange(3000);
     });
   } catch (error) {
     console.log('enqueuePlaceList error', error);
   }
 };
 
-enqueuePlaceList();
+// Start queue and follow range.json from and to variables:
+// enqueuePlaceList();
+
+// Get specific id only
+extractData('124542');
+
+// Get Supabase id's with a custom range
 // getPlaceIdList({ customRangeFrom: 60991, customRangeTo: 60991 });
