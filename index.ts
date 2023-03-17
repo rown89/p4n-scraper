@@ -1,6 +1,6 @@
 import Queue from 'queue-promise';
 import fs from 'fs';
-import { extractData, getPlaceIdList, updateRange } from './scraping';
+import { extractData, getPlaceIdList, updateRange } from './scraper';
 import colors from 'ansi-colors';
 import cliProgress from 'cli-progress';
 import * as dotenv from 'dotenv';

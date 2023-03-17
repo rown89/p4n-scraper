@@ -1,21 +1,12 @@
 import playwright from 'playwright';
-import {
-  getTitle,
-  getContacts,
-  getAddress,
-  getUsefulInformation,
-  getServices,
-  getActivities,
-} from '../scraping';
-
-const BASE_URL = process.env.BASE_URL;
-const BASE_LANGUAGE = process.env.BASE_LANGUAGE;
-const BASE_PLACE_PAGE_URL = process.env.BASE_PLACE_PAGE_URL;
+import { dirname } from 'path';
+import { BASE_LANGUAGE, BASE_PLACE_PAGE_URL, BASE_URL } from '../configurations/costants';
+import { getTitle, getContacts, getAddress, getUsefulInformation, getServices, getActivities } from '.';
 
 export const extractData = async (id: string) => {
   const browser = await playwright.chromium.launch();
   const context = await browser.newContext({
-    storageState: 'storageState.json',
+    storageState: require.resolve('../configurations/storageState.json'),
   });
   const page = await context.newPage();
 

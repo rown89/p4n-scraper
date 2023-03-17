@@ -1,9 +1,8 @@
 import playwright, { Page } from 'playwright';
 import { createClient } from '@supabase/supabase-js';
-import { isOdd, updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
+import { updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
+import { supabaseKey, supabaseUrl } from '../configurations/costants';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const getTitle = async (page: Page, id: string) => {

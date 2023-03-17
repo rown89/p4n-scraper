@@ -1,15 +1,12 @@
 import { chromium, FullConfig } from '@playwright/test';
-import login from './scraping/login';
-
-const username = process.env.P4N_USERNAME ?? '';
-const password = process.env.P4N_PASSWORD ?? '';
+import login from '../scraper/login';
 
 async function globalSetup(config: FullConfig): Promise<void> {
   const { storageState } = config.projects[0].use;
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  await login(page, username, password);
+  await login(page);
 
   await page.context().storageState({
     path: storageState as string,

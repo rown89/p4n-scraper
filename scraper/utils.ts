@@ -1,8 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import fs, { promises } from 'fs';
+import { supabaseUrl, supabaseKey } from '../configurations/costants';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export interface updateValuesByPlaceIdType {
@@ -13,6 +12,11 @@ export interface updateValuesByPlaceIdType {
 }
 
 export interface updateRangeType {
+  to: number;
+}
+
+interface rangeType {
+  from: number;
   to: number;
 }
 
@@ -36,18 +40,23 @@ export const updateValuesByPlaceId = async ({ id, db, updateValues, event }: upd
   }
 };
 
+export const rangeJson = async (action: 'read' | 'write', newFrom?: number, newTo?: number) => {
+  if (action === 'read') {
+    const currentRange: rangeType = JSON.parse(await promises.readFile('range.json', 'utf-8'));
+    return currentRange;
+  }
+  if (action === 'write' && newFrom && newTo) {
+    const newRange: rangeType = { from: newFrom, to: newTo };
+    await promises.writeFile('range.json', JSON.stringify(newRange, null, 1));
+  }
+};
+
 export const updateRange = async (to: number) => {
   try {
-    const currentRange: { from: number; to: number } = JSON.parse(
-      await promises.readFile('range.json', 'utf-8'),
-    );
-    const newRange = { from: currentRange.to + 1, to: currentRange.to + to };
+    const range = await rangeJson('read');
+    const newRange = await rangeJson('write', range.to + 1, range.to + to);
     await promises.writeFile('range.json', JSON.stringify(newRange, null, 1));
   } catch (error) {
     console.log('updateRange error', error);
   }
-};
-
-export const isOdd = (num) => {
-  return num % 2;
 };

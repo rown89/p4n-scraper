@@ -1,11 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
 import * as dotenv from 'dotenv';
+import { supabaseKey, supabaseUrl } from '../configurations/costants';
+import { rangeJson } from './utils';
 
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface getPlaceIdListType {
@@ -16,7 +15,7 @@ interface getPlaceIdListType {
 export const getPlaceIdList = async ({ customRangeFrom, customRangeTo }: getPlaceIdListType = {}): Promise<
   number[]
 > => {
-  const range: { from: number; to: number } = JSON.parse(await fs.promises.readFile('range.json', 'utf-8'));
+  const range = await rangeJson('read');
 
   let range_from = customRangeFrom || range.from;
   let range_to = customRangeTo || range.to;
