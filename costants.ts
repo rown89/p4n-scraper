@@ -1,3 +1,6 @@
+import path from 'path';
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
 export const BASE_URL = process.env.BASE_URL;
 export const BASE_LANGUAGE = process.env.BASE_LANGUAGE;
 export const BASE_LOGIN_URL = process.env.BASE_LOGIN_URL;

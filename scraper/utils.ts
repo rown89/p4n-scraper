@@ -1,10 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import fs, { promises } from 'fs';
-import { supabaseUrl, supabaseKey } from '../configurations/costants';
+import { Page } from 'playwright';
+require('dotenv').config();
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+export interface getDataFunctionProps {
+  supabase: SupabaseClient;
+  page: Page;
+  id: string;
+}
 
 export interface updateValuesByPlaceIdType {
+  supabase: SupabaseClient;
   id: string;
   db: string;
   updateValues: Record<string, any>;
@@ -20,7 +26,13 @@ interface rangeType {
   to: number;
 }
 
-export const updateValuesByPlaceId = async ({ id, db, updateValues, event }: updateValuesByPlaceIdType) => {
+export const updateValuesByPlaceId = async ({
+  supabase,
+  id,
+  db,
+  updateValues,
+  event,
+}: updateValuesByPlaceIdType) => {
   try {
     const { data, error } = await supabase.from(db).update(updateValues).eq('place_id', id);
     if (error)

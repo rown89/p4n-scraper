@@ -1,16 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseKey, supabaseUrl } from '../costants';
 import * as dotenv from 'dotenv';
-import { supabaseKey, supabaseUrl } from '../configurations/costants';
 import { rangeJson } from './utils';
-
 dotenv.config();
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface getPlaceIdListType {
   customRangeFrom?: number;
   customRangeTo?: number;
 }
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const getPlaceIdList = async ({ customRangeFrom, customRangeTo }: getPlaceIdListType = {}): Promise<
   number[]
