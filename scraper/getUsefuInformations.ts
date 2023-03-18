@@ -1,4 +1,4 @@
-import { getDataFunctionProps } from './utils';
+import { getDataFunctionProps, updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
 
 export const getUsefulInformation = async ({ supabase, page, id }: getDataFunctionProps) => {
   try {
@@ -33,7 +33,6 @@ export const getUsefulInformation = async ({ supabase, page, id }: getDataFuncti
         if (title?.includes('Limited height')) height_limit = values[i]?.replace('m', '');
       });
 
-      /*
       const updateValues = {
         opening_time,
         height_limit,
@@ -52,7 +51,6 @@ export const getUsefulInformation = async ({ supabase, page, id }: getDataFuncti
       };
 
       await updateValuesByPlaceId(updateValuesArgs);
-    */
     }
   } catch (error) {
     console.log('getUsefulInformation error', error);

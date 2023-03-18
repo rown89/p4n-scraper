@@ -1,4 +1,4 @@
-import { getDataFunctionProps } from './utils';
+import { getDataFunctionProps, updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
 
 export const getContacts = async ({ supabase, page, id }: getDataFunctionProps) => {
   try {
@@ -23,7 +23,6 @@ export const getContacts = async ({ supabase, page, id }: getDataFunctionProps) 
         if (plainPhone_number) phone_number = plainPhone_number;
       }
 
-      /*
       const updateValues = { website, phone_number };
       for (let k in updateValues) updateValues[k] == '' && delete updateValues[k];
 
@@ -35,8 +34,8 @@ export const getContacts = async ({ supabase, page, id }: getDataFunctionProps) 
         event: 'getContacts',
       };
 
-      await updateValuesByPlaceId(updateValuesArgs); 
-    */
+      await updateValuesByPlaceId(updateValuesArgs);
+
       return true;
     }
   } catch (error) {

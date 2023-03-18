@@ -54,9 +54,7 @@ export const getActivities = async ({ supabase, page, id }: getDataFunctionProps
           default:
         }
       }
-      console.log(results);
 
-      /* 
       const updateValuesArgs: updateValuesByPlaceIdType = {
         supabase,
         id,
@@ -66,7 +64,7 @@ export const getActivities = async ({ supabase, page, id }: getDataFunctionProps
       };
 
       await updateValuesByPlaceId(updateValuesArgs);
-     */
+
       return true;
     }
   } catch (error) {

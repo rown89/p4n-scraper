@@ -1,5 +1,4 @@
 import playwright from 'playwright';
-import { dirname } from 'path';
 import { BASE_LANGUAGE, BASE_PLACE_PAGE_URL, BASE_URL } from '../costants';
 import { getTitle, getContacts, getAddress, getUsefulInformation, getServices, getActivities } from '.';
 
@@ -10,8 +9,14 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const extractData = async (id: string) => {
   try {
-    const browser = await playwright.chromium.launch();
-    const page = await browser.newPage();
+    const browser = await playwright.chromium.launch({
+      headless: true,
+    });
+    const context = await browser.newContext({
+      storageState: 'storageState.json',
+    });
+    const page = await context.newPage();
+
     await page.goto(`${BASE_URL}/${BASE_LANGUAGE}/${BASE_PLACE_PAGE_URL}/${id}`, {
       waitUntil: 'domcontentloaded',
     });

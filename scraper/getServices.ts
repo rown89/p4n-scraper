@@ -35,6 +35,9 @@ export const getServices = async ({ supabase, page, id }: getDataFunctionProps) 
           case 'Drinking water':
             results.drinking_water = true;
             break;
+          case 'Bakery':
+            results.bakery = true;
+            break;
           case 'Black water':
             results.black_waste_water = true;
             break;
@@ -69,16 +72,15 @@ export const getServices = async ({ supabase, page, id }: getDataFunctionProps) 
         }
       }
 
-      /* const updateValuesArgs: updateValuesByPlaceIdType = {
-          supabase,
-          id,
-          db: 'places',
-          updateValues: results,
-          event: 'getServices',
-        };
-  
-        await updateValuesByPlaceId(updateValuesArgs);
-      */
+      const updateValuesArgs: updateValuesByPlaceIdType = {
+        supabase,
+        id,
+        db: 'places',
+        updateValues: results,
+        event: 'getServices',
+      };
+
+      await updateValuesByPlaceId(updateValuesArgs);
     }
   } catch (error) {
     console.log('getServices error', error);
