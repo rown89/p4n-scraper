@@ -4,7 +4,6 @@ import { extractData, getPlaceIdList, updateRange } from './scraper';
 import colors from 'ansi-colors';
 import cliProgress from 'cli-progress';
 import * as dotenv from 'dotenv';
-
 dotenv.config();
 
 const bar = new cliProgress.SingleBar({
@@ -43,7 +42,7 @@ export const enqueuePlaceList = async () => {
     queue.on('reject', (error) => console.log('reject', error));
     queue.on('end', async () => {
       bar.stop();
-      await updateRange(3000);
+      updateRange(5000);
     });
   } catch (error) {
     console.log('enqueuePlaceList error', error);
@@ -53,8 +52,8 @@ export const enqueuePlaceList = async () => {
 // Start queue and follow range.json from and to variables:
 enqueuePlaceList();
 
-// Get specific id only
-// extractData('94520');
+// Extract specific id only
+// extractData('94507');
 
 // Get Supabase id's with a custom range
 // getPlaceIdList({ customRangeFrom: 60992, customRangeTo: 60992 });

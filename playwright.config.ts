@@ -5,8 +5,8 @@ require('dotenv').config({ path: path.resolve(__dirname, '/.env') });
 
 export default defineConfig({
   globalSetup: require.resolve('./global-setup'),
-  testDir: './scraper',
-  name: 'scraper logged in',
+  testDir: './scraper/tests',
+  name: 'p4n function tests',
   testMatch: ['**/*loggedin.spec.ts'],
   use: {
     headless: false,

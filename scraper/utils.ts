@@ -38,7 +38,7 @@ export const updateValuesByPlaceId = async ({
     if (error)
       console.log(
         `\n
-        supabase updateValuesByPlaceId error: ${JSON.stringify(error)},
+        updateValuesByPlaceId error: ${JSON.stringify(error)},
         id: ${id},
         updateValue: ${JSON.stringify(updateValues)},
         event: ${event}\n
@@ -66,8 +66,7 @@ export const rangeJson = async (action: 'read' | 'write', newFrom?: number, newT
 export const updateRange = async (to: number) => {
   try {
     const range = await rangeJson('read');
-    const newRange = await rangeJson('write', range.to + 1, range.to + to);
-    await promises.writeFile('range.json', JSON.stringify(newRange, null, 1));
+    await rangeJson('write', range.to + 1, range.to + to);
   } catch (error) {
     console.log('updateRange error', error);
   }

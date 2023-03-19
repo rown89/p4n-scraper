@@ -3,21 +3,20 @@ import { getDataFunctionProps, updateValuesByPlaceId, updateValuesByPlaceIdType 
 export const getActivities = async ({ supabase, page, id }: getDataFunctionProps) => {
   try {
     const activitiesContainer = await page.locator('.place-specs-services').nth(1).isVisible();
+    const results = {
+      monuments: false,
+      surf_sports: false,
+      mountain_bike: false,
+      hikes: false,
+      climbing: false,
+      canoe_kayak: false,
+      fishing_spots: false,
+      swimming: false,
+      point_of_view: false,
+      playground: false,
+    };
 
     if (activitiesContainer) {
-      const results = {
-        monuments: false,
-        surf_sports: false,
-        mountain_bike: false,
-        hikes: false,
-        climbing: false,
-        canoe_kayak: false,
-        fishing_spots: false,
-        swimming: false,
-        point_of_view: false,
-        playground: false,
-      };
-
       const activities = await page.locator('.place-specs-services:nth-child(1) > li > img').all();
 
       for await (const activity of activities) {
@@ -54,19 +53,17 @@ export const getActivities = async ({ supabase, page, id }: getDataFunctionProps
           default:
         }
       }
-
-      const updateValuesArgs: updateValuesByPlaceIdType = {
-        supabase,
-        id,
-        db: 'places',
-        updateValues: results,
-        event: 'getServices',
-      };
-
-      await updateValuesByPlaceId(updateValuesArgs);
-
-      return true;
     }
+
+    const updateValuesArgs: updateValuesByPlaceIdType = {
+      supabase,
+      id,
+      db: 'places',
+      updateValues: results,
+      event: 'getServices',
+    };
+
+    await updateValuesByPlaceId(updateValuesArgs);
   } catch (error) {
     console.log(`id: ${id} getActivities error\n`, error);
     return false;

@@ -4,7 +4,6 @@ export const getTitle = async ({ supabase, page, id }: getDataFunctionProps) => 
   try {
     const plainTitle = await page.locator('h1').innerText();
     const title = plainTitle?.replace(/ *\([^)]*\) */g, '')?.substring(0);
-
     if (title) {
       const updateValuesArgs: updateValuesByPlaceIdType = {
         supabase,
