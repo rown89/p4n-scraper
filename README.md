@@ -1,18 +1,14 @@
 # Park4Night Scraper
 
-Scaper built on top of the new Park4Night website with Node, Playwright API and Supabase to store page details.
+Scaper built on top of the new Park4Night website with Node, Playwright API and Supabase to store place page details.
 
-Inside the index.ts you will find 3 functions:
+`enqueuePlaceList()` start `getPlaceIdList()` who will take care of read range.json file and download the requested range of ids from a supabase table called `places`, where I stored all the available place ids of Park4Night, retrieved by a public endpoint: https://www.park4night.com/services/V3/getLieuxLite.php
 
-- `enqueuePlaceList`
-- `extractData` (commented)
-- `getPlaceIdList` (commented)
-
-enqueuePlaceList start a queue of 5 concurrent place id page of 5000 place id
+Write a file called `lastPlacesList.json` with all the ids that will be scanned. Run a for loop of the id list and enqueue the `extractData()` for each id. When the dequeue process end `updateRange()` will run to download the next range of ids who will be scanned.
 
 ## Installation
 
-download p4n-scaper repo and run
+download p4n-scaper repo and launch
 
 ```bash
   npm install
@@ -41,6 +37,8 @@ To run this project, you will need to add the following environment variables to
 `CONCURRENT = 5`
 
 ## Usage
+
+As default you will scan 5000 place detail pages each time you run:
 
 ```
 npm run start
