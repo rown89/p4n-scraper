@@ -15,7 +15,7 @@ const bar = new cliProgress.SingleBar({
 });
 
 export const enqueuePlaceList = async () => {
-  const concurrent = 5;
+  const concurrent = Number(process.env.CONCURRENT) || 5;
   const queue = new Queue({
     concurrent,
     interval: 20,
@@ -42,7 +42,7 @@ export const enqueuePlaceList = async () => {
     queue.on('reject', (error) => console.log('reject', error));
     queue.on('end', async () => {
       bar.stop();
-      updateRange(Number(process.env.UPDATE_RANGE));
+      updateRange(Number(process.env.UPDATE_RANGE) || 5000);
     });
   } catch (error) {
     console.log('enqueuePlaceList error', error);
