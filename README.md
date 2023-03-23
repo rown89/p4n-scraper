@@ -1,6 +1,6 @@
 # Park4Night Scraper
 
-Scaper built on top of the new Park4Night website with Node, Playwright API and Supabase to store place page details.
+Scaper built on top of the new Park4Night website with Node, Playwright API and Supabase to store place detail pages data.
 
 `enqueuePlaceList()` start `getPlaceIdList()` who will take care of read range.json file and download the requested range of ids from a supabase table called `places`, where I stored all the available place ids of Park4Night, retrieved by a public endpoint: https://www.park4night.com/services/V3/getLieuxLite.php
 
