@@ -42,7 +42,7 @@ export const enqueuePlaceList = async () => {
     queue.on('reject', (error) => console.log('reject', error));
     queue.on('end', async () => {
       bar.stop();
-      updateRange(5000);
+      updateRange(Number(process.env.UPDATE_RANGE));
     });
   } catch (error) {
     console.log('enqueuePlaceList error', error);
@@ -56,4 +56,4 @@ enqueuePlaceList();
 // extractData('94507');
 
 // Get Supabase id's with a custom range
-// getPlaceIdList({ customRangeFrom: 60992, customRangeTo: 60992 });
+// getPlaceIdList({ customRangeFrom: 101993, customRangeTo: 101993 });
