@@ -35,7 +35,6 @@ export const enqueuePlaceList = async () => {
     queue.start();
     bar.start(placeList?.length, 0);
 
-    queue.on('start', () => {});
     queue.on('resolve', (data) => {
       bar.increment();
     });
@@ -49,7 +48,6 @@ export const enqueuePlaceList = async () => {
   }
 };
 
-// Start queue and follow range.json from and to variables:
 enqueuePlaceList();
 
 // Extract specific id only
