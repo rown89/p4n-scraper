@@ -25,7 +25,7 @@ export const enqueuePlaceList = async () => {
   const placeList = await getPlaceIdList();
 
   try {
-    fs.writeFile('lastPlaceList.json', JSON.stringify(placeList), (err) => {
+    fs.writeFile('queueList.json', JSON.stringify(placeList), (err) => {
       if (err) console.log('fs error ', err);
     });
     for await (const id of placeList) {
