@@ -1,20 +1,21 @@
 import { getDataFunctionProps, updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
 
 export const getActivities = async ({ supabase, page, id }: getDataFunctionProps) => {
+  const results = {
+    monuments: false,
+    surf_sports: false,
+    mountain_bike: false,
+    hikes: false,
+    climbing: false,
+    canoe_kayak: false,
+    fishing_spots: false,
+    swimming: false,
+    point_of_view: false,
+    playground: false,
+  };
+
   try {
     const activitiesContainer = await page.locator('.place-specs-services').nth(1).isVisible();
-    const results = {
-      monuments: false,
-      surf_sports: false,
-      mountain_bike: false,
-      hikes: false,
-      climbing: false,
-      canoe_kayak: false,
-      fishing_spots: false,
-      swimming: false,
-      point_of_view: false,
-      playground: false,
-    };
 
     if (activitiesContainer) {
       const activities = await page.locator('.place-specs-services:nth-child(1) > li > img').all();

@@ -1,27 +1,27 @@
 import { getDataFunctionProps, updateValuesByPlaceId, updateValuesByPlaceIdType } from './utils';
 
 export const getServices = async ({ supabase, page, id }: getDataFunctionProps) => {
+  const results = {
+    pet_friendly: false,
+    drinking_water: false,
+    grey_waste_water: false,
+    black_waste_water: false,
+    trash_can: false,
+    showers: false,
+    bakery: false,
+    electricity: false,
+    wifi: false,
+    winter_caravaning: false,
+    swimming_pool: false,
+    laundry: false,
+    mobile_connection: false,
+    gpl: false,
+    gas: false,
+    motorhome_wash: false,
+  };
+
   try {
     const ServicesContainer = await page.locator('.place-specs-services').nth(1).isVisible();
-
-    const results = {
-      pet_friendly: false,
-      drinking_water: false,
-      grey_waste_water: false,
-      black_waste_water: false,
-      trash_can: false,
-      showers: false,
-      bakery: false,
-      electricity: false,
-      wifi: false,
-      winter_caravaning: false,
-      swimming_pool: false,
-      laundry: false,
-      mobile_connection: false,
-      gpl: false,
-      gas: false,
-      motorhome_wash: false,
-    };
 
     if (ServicesContainer) {
       const services = await page.locator('.place-specs-services:nth-child(1) > li > img').all();
