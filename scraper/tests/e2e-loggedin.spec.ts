@@ -32,9 +32,6 @@ test.describe('suite', () => {
     if (isContainerTextVisible) {
       const containerText = await page.locator('.place-info-location > li:nth-child(2) > p').innerText();
 
-      const address = containerText?.split('\n')?.[0];
-      const city = containerText?.split('\n')?.[1].split(' ')[1].replace(',', '');
-      const cap = containerText?.split('\n')?.[1]?.substring(0, 5);
       const country = containerText?.split('\n')?.[2]?.substring(1);
     }
 
@@ -71,10 +68,7 @@ test.describe('suite', () => {
     const isInformationsVisible = await page.locator('.place-info-details').isVisible();
 
     if (isInformationsVisible) {
-      let opening_time;
       let height_limit;
-      let parking_cost;
-      let price_of_services;
       let park_slots;
 
       const informationTitle = await page.locator('.place-info-details > dt').all();
@@ -92,10 +86,7 @@ test.describe('suite', () => {
       }
 
       titles.map((title, i) => {
-        if (title?.includes('Price of services')) price_of_services = values[i];
         if (title?.includes('Number of places')) park_slots = values[i];
-        if (title?.includes('Open/Closed')) opening_time = values[i];
-        if (title?.includes('Parking cost')) parking_cost = values[i];
         if (title?.includes('Limited height')) height_limit = values[i]?.replace('m', '');
       });
     }

@@ -14,7 +14,7 @@ const bar = new cliProgress.SingleBar({
   hideCursor: true,
 });
 
-export const enqueuePlaceList = async () => {
+export const enqueuePlaceList = async ({ customList = false }: { customList?: boolean }) => {
   const concurrent = Number(process.env.CONCURRENT) || 5;
   const queue = new Queue({
     concurrent,
@@ -22,12 +22,9 @@ export const enqueuePlaceList = async () => {
     start: false,
   });
 
-  const placeList = await getPlaceIdList();
-
   try {
-    fs.writeFile('queueList.json', JSON.stringify(placeList), (err) => {
-      if (err) console.log('fs error ', err);
-    });
+    const placeList = await getPlaceIdList({ customList });
+
     for await (const id of placeList) {
       queue.enqueue([() => extractData(id?.toString())]);
     }
@@ -41,17 +38,21 @@ export const enqueuePlaceList = async () => {
     queue.on('reject', (error) => console.log('reject', error));
     queue.on('end', async () => {
       bar.stop();
-      updateRange(Number(process.env.UPDATE_RANGE) || 5000);
+      updateRange(customList && placeList.length > 0 ? placeList.length : Number(process.env.UPDATE_RANGE));
     });
   } catch (error) {
     console.log('enqueuePlaceList error', error);
   }
 };
 
-enqueuePlaceList();
+// default
+enqueuePlaceList({});
 
 // Extract specific id only
 // extractData('94507');
 
 // Get Supabase id's with a custom range
 // getPlaceIdList({ customRangeFrom: 101993, customRangeTo: 101993 });
+
+// Get list directly from queueList.json
+// enqueuePlaceList({ customList: true });

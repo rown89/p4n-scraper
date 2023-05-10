@@ -10,7 +10,6 @@ export const getServices = async ({ supabase, page, id }: getDataFunctionProps) 
       grey_waste_water: false,
       black_waste_water: false,
       trash_can: false,
-      public_toilette: false,
       showers: false,
       bakery: false,
       electricity: false,
@@ -65,6 +64,8 @@ export const getServices = async ({ supabase, page, id }: getDataFunctionProps) 
           case 'Washing for motorhome':
             results.motorhome_wash = true;
             break;
+          case 'Bottled gas services':
+            results.gas = true;
           case '3G/4G internet':
             results.mobile_connection = true;
             break;

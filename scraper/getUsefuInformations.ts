@@ -5,11 +5,7 @@ export const getUsefulInformation = async ({ supabase, page, id }: getDataFuncti
     const isInformationsVisible = await page.locator('.place-info-details').isVisible();
 
     if (isInformationsVisible) {
-      let opening_time;
       let height_limit;
-      let parking_cost;
-      let price_of_services;
-      let park_slots;
 
       const informationTitle = await page.locator('.place-info-details > dt').all();
       const informationValue = await page.locator('.place-info-details > dd').all();
@@ -26,19 +22,11 @@ export const getUsefulInformation = async ({ supabase, page, id }: getDataFuncti
       }
 
       titles.map((title, i) => {
-        if (title?.includes('Price of services')) price_of_services = values[i];
-        if (title?.includes('Number of places')) park_slots = values[i];
-        if (title?.includes('Open/Closed')) opening_time = values[i];
-        if (title?.includes('Parking cost')) parking_cost = values[i];
         if (title?.includes('Limited height')) height_limit = values[i]?.replace('m', '');
       });
 
       const updateValues = {
-        opening_time,
         height_limit,
-        parking_cost,
-        price_of_services,
-        park_slots,
       };
       for (let k in updateValues) updateValues[k] == '' && delete updateValues[k];
 

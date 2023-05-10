@@ -71,3 +71,8 @@ export const updateRange = async (to: number) => {
     console.log('updateRange error', error);
   }
 };
+
+export const parseBoolean = (value: string) => {
+  if (value === 'true') return true;
+  else false;
+};

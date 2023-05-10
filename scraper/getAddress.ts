@@ -6,16 +6,13 @@ export const getAddress = async ({ supabase, page, id }: getDataFunctionProps) =
 
     if (isContainerTextVisible) {
       const containerText = await page.locator('.place-info-location > li:nth-child(2) > p').innerText();
-      const address = containerText?.split('\n')?.[0];
-      const city = containerText?.split('\n')?.[1].split(' ')[1]?.replace(',', '');
-      const cap = containerText?.split('\n')?.[1]?.substring(0, 5);
       const country = containerText?.split('\n')?.[2]?.substring(1);
 
       const updateValuesArgs: updateValuesByPlaceIdType = {
         supabase,
         id,
         db: 'places',
-        updateValues: { address, cap, city, country },
+        updateValues: { country },
         event: 'getAddress',
       };
 
