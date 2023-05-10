@@ -60,7 +60,7 @@ export const getActivities = async ({ supabase, page, id }: getDataFunctionProps
             }
           }
         }
-        console.log('activities', results);
+
         const updateValuesArgs: updateValuesByPlaceIdType = {
           supabase,
           id,

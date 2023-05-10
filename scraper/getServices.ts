@@ -78,7 +78,7 @@ export const getServices = async ({ supabase, page, id }: getDataFunctionProps) 
             }
           }
         }
-        console.log('services', results);
+
         const updateValuesArgs: updateValuesByPlaceIdType = {
           supabase,
           id,
