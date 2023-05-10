@@ -49,7 +49,7 @@ export const enqueuePlaceList = async ({ customList = false }: { customList?: bo
 enqueuePlaceList({});
 
 // Extract specific id only
-// extractData('94507');
+// extractData('223093');
 
 // Get Supabase id's with a custom range
 // getPlaceIdList({ customRangeFrom: 101993, customRangeTo: 101993 });
