@@ -7,7 +7,8 @@
     "build:digitalocean": "npm install --production=false && npm run build && npm ci",
     "eslint:fix": "eslint --fix",
     "prepare": "husky install",
-    "test": "npx playwright scraper/tests"
+    "test": "npx playwright scraper/tests",
+    "json-to-geojson": "ts-node json_to_geojson/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +25,6 @@
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-prettier": "^4.2.1",
     "playwright": "^1.30.0",
-    "qjobs": "^1.2.0",
     "queue-promise": "^2.2.1",
     "ts-node": "^10.9.1"
   },

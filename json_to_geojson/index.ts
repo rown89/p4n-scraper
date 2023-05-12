@@ -1,9 +1,9 @@
-import fs, { promises } from 'fs';
+import { promises } from 'fs';
 
 const launchConversion = async () => {
-  const sqlDump = await JSON.parse(await promises.readFile('places.json', 'utf-8'));
+  const placesJson = await JSON.parse(await promises.readFile('places.json', 'utf-8'));
 
-  const geoJSON = sqlDump.map((item, i) => {
+  const geoJSON = placesJson.map((item) => {
     return {
       type: 'Feature',
       geometry: {

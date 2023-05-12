@@ -1,5 +1,5 @@
 import { test, Page, expect } from '@playwright/test';
-import { BASE_URL, BASE_LANGUAGE, BASE_PLACE_PAGE_URL } from '../../costants';
+import { baseUrl, baseLanguage, basePlacePageUrl } from '../../costants';
 
 let page: Page;
 test.describe.configure({ mode: 'serial' });
@@ -14,7 +14,7 @@ test.describe('suite', () => {
   });
 
   test('runs first', async () => {
-    await page.goto(`${BASE_URL}/${BASE_LANGUAGE}/${BASE_PLACE_PAGE_URL}/397089`, {
+    await page.goto(`${baseUrl}/${baseLanguage}/${basePlacePageUrl}/397089`, {
       waitUntil: 'networkidle',
     });
   });

@@ -3,6 +3,7 @@ import { extractData, getPlaceIdList, updateRange } from './scraper';
 import colors from 'ansi-colors';
 import cliProgress from 'cli-progress';
 import * as dotenv from 'dotenv';
+import { concurrent, updateRangeValue } from './costants';
 dotenv.config();
 
 const bar = new cliProgress.SingleBar({
@@ -14,9 +15,8 @@ const bar = new cliProgress.SingleBar({
 });
 
 export const enqueuePlaceList = async ({ customList = false }: { customList?: boolean }) => {
-  const concurrent = Number(process.env.CONCURRENT);
   const queue = new Queue({
-    concurrent,
+    concurrent: Number(concurrent),
     interval: 20,
     start: false,
   });
@@ -37,7 +37,7 @@ export const enqueuePlaceList = async ({ customList = false }: { customList?: bo
     queue.on('reject', (error) => console.log('reject', error));
     queue.on('end', async () => {
       bar.stop();
-      updateRange(customList && placeList.length > 0 ? placeList.length : Number(process.env.UPDATE_RANGE));
+      updateRange(customList && placeList.length > 0 ? placeList.length : Number(updateRangeValue));
     });
   } catch (error) {
     console.log('enqueuePlaceList error', error);

@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
-import { BASE_LANGUAGE, BASE_LOGIN_URL, BASE_URL, password, username } from '../costants';
+import { baseLanguage, baseLoginUrl, baseUrl, password, username } from '../costants';
 
 async function login(page: Page): Promise<void> {
   try {
-    await page.goto(`${BASE_URL}/${BASE_LANGUAGE}/${BASE_LOGIN_URL}`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${baseUrl}/${baseLanguage}/${baseLoginUrl}`, { waitUntil: 'domcontentloaded' });
     await page.locator('[id=username]').fill(username);
     await page.locator('[id=password]').fill(password);
     await page

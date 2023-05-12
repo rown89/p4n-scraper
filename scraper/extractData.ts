@@ -1,5 +1,17 @@
 import playwright from 'playwright';
-import { BASE_LANGUAGE, BASE_PLACE_PAGE_URL, BASE_URL } from '../costants';
+import {
+  RESOURCE_EXCLUSTIONS,
+  baseLanguage,
+  basePlacePageUrl,
+  baseUrl,
+  extractActivities,
+  extractAddress,
+  extractContacts,
+  extractLowerRatingIds,
+  extractServices,
+  extractTitle,
+  extractUsefulInformation,
+} from '../costants';
 import {
   getTitle,
   getContacts,
@@ -15,7 +27,6 @@ import { supabaseKey, supabaseUrl } from '../costants';
 import { getLowRatingIds } from './getLowRatingIds';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
-const RESOURCE_EXCLUSTIONS = ['image', 'stylesheet', 'media', 'font'];
 
 export const extractData = async (id: string) => {
   try {
@@ -31,17 +42,17 @@ export const extractData = async (id: string) => {
       return RESOURCE_EXCLUSTIONS.includes(route.request().resourceType()) ? route.abort() : route.continue();
     });
 
-    await page.goto(`${BASE_URL}/${BASE_LANGUAGE}/${BASE_PLACE_PAGE_URL}/${id}`, {
+    await page.goto(`${baseUrl}/${baseLanguage}/${basePlacePageUrl}/${id}`, {
       waitUntil: 'domcontentloaded',
     });
 
-    parseBoolean(process.env.GET_TITLE) && (await getTitle({ supabase, page, id }));
-    parseBoolean(process.env.GET_CONTACTS) && (await getContacts({ supabase, page, id }));
-    parseBoolean(process.env.GET_ADDRESS) && (await getAddress({ supabase, page, id }));
-    parseBoolean(process.env.GET_USEFUL_INFORMATION) && (await getUsefulInformation({ supabase, page, id }));
-    parseBoolean(process.env.GET_SERVICES) && (await getServices({ supabase, page, id }));
-    parseBoolean(process.env.GET_ACTIVITIES) && (await getActivities({ supabase, page, id }));
-    parseBoolean(process.env.GET_LOWER_RATING_IDS) && (await getLowRatingIds(page, id));
+    parseBoolean(extractTitle) && (await getTitle({ supabase, page, id }));
+    parseBoolean(extractContacts) && (await getContacts({ supabase, page, id }));
+    parseBoolean(extractAddress) && (await getAddress({ supabase, page, id }));
+    parseBoolean(extractUsefulInformation) && (await getUsefulInformation({ supabase, page, id }));
+    parseBoolean(extractServices) && (await getServices({ supabase, page, id }));
+    parseBoolean(extractActivities) && (await getActivities({ supabase, page, id }));
+    parseBoolean(extractLowerRatingIds) && (await getLowRatingIds(page, id));
     await browser.close();
 
     return id;
