@@ -21,22 +21,22 @@ download p4n-scaper repo and launch
 To run this project, you will need to add the following environment variables to your .env file
 
 `BASE_URL = https://www.park4night.com`
-
 `BASE_PLACE_PAGE_URL = place`
-
 `BASE_LOGIN_URL = auth/login`
-
 `P4N_USERNAME`
-
 `P4N_PASSWORD`
-
 `SUPABASE_KEY`
-
 `SUPABASE_URL`
-
 `UPDATE_RANGE = 5000`
-
 `CONCURRENT = 5`
+`JAVASCRIPT = true`
+`GET_TITLE = true`
+`GET_CONTACTS = true`
+`GET_ADDRESS = true
+`GET_USEFUL_INFORMATION = true`
+`GET_SERVICES = true`
+`GET_ACTIVITIES = true`
+`GET_LOWER_RATING_IDS = false`
 
 ## Usage
 

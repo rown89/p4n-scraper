@@ -14,7 +14,7 @@ const bar = new cliProgress.SingleBar({
 });
 
 export const enqueuePlaceList = async ({ customList = false }: { customList?: boolean }) => {
-  const concurrent = Number(process.env.CONCURRENT) || 5;
+  const concurrent = Number(process.env.CONCURRENT);
   const queue = new Queue({
     concurrent,
     interval: 20,
