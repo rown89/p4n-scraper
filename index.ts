@@ -1,5 +1,4 @@
 import Queue from 'queue-promise';
-import fs from 'fs';
 import { extractData, getPlaceIdList, updateRange } from './scraper';
 import colors from 'ansi-colors';
 import cliProgress from 'cli-progress';
@@ -49,7 +48,7 @@ export const enqueuePlaceList = async ({ customList = false }: { customList?: bo
 enqueuePlaceList({});
 
 // Extract specific id only
-// extractData('223093');
+// extractData('406982');
 
 // Get Supabase id's with a custom range
 // getPlaceIdList({ customRangeFrom: 101993, customRangeTo: 101993 });

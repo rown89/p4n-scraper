@@ -12,9 +12,10 @@ import {
 
 import { createClient } from '@supabase/supabase-js';
 import { supabaseKey, supabaseUrl } from '../costants';
+import { getLowRatingIds } from './getLowRatingIds';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
-const RESOURCE_EXCLUSTIONS = ['image', 'stylesheet', 'media', 'font', 'other'];
+const RESOURCE_EXCLUSTIONS = ['image', 'stylesheet', 'media', 'font'];
 
 export const extractData = async (id: string) => {
   try {
@@ -34,12 +35,13 @@ export const extractData = async (id: string) => {
       waitUntil: 'domcontentloaded',
     });
 
-    process.env.GET_TITLE && (await getTitle({ supabase, page, id }));
+    parseBoolean(process.env.GET_TITLE) && (await getTitle({ supabase, page, id }));
     parseBoolean(process.env.GET_CONTACTS) && (await getContacts({ supabase, page, id }));
     parseBoolean(process.env.GET_ADDRESS) && (await getAddress({ supabase, page, id }));
     parseBoolean(process.env.GET_USEFUL_INFORMATION) && (await getUsefulInformation({ supabase, page, id }));
     parseBoolean(process.env.GET_SERVICES) && (await getServices({ supabase, page, id }));
     parseBoolean(process.env.GET_ACTIVITIES) && (await getActivities({ supabase, page, id }));
+    parseBoolean(process.env.GET_LOWER_RATING_IDS) && (await getLowRatingIds(page, id));
     await browser.close();
 
     return id;
