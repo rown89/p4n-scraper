@@ -20,4 +20,4 @@ export const extractActivities = process.env.EXTRACT_ACTIVITIES;
 export const extractLowerRatingIds = process.env.EXTRACT_LOWER_RATING_IDS;
 
 // Playwright resource to exclude arr
-export const RESOURCE_EXCLUSTIONS = ['image', 'stylesheet', 'media', 'font'];
+export const RESOURCE_EXCLUSIONS = ['image', 'stylesheet', 'media', 'font'];

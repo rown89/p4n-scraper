@@ -14,7 +14,9 @@ const bar = new cliProgress.SingleBar({
   hideCursor: true,
 });
 
-export const enqueuePlaceList = async ({ customList = false }: { customList?: boolean }) => {
+export const enqueuePlaceList = async (
+  { customList = false }: { customList?: boolean } = { customList: false },
+) => {
   const queue = new Queue({
     concurrent: Number(concurrent),
     interval: 20,
@@ -25,27 +27,31 @@ export const enqueuePlaceList = async ({ customList = false }: { customList?: bo
     const placeList = await getPlaceIdList({ customList });
 
     for await (const id of placeList) {
-      queue.enqueue([() => extractData(id?.toString())]);
+      if (id) {
+        queue.enqueue([() => extractData(id.toString())]);
+      }
     }
 
-    queue.start();
-    bar.start(placeList?.length, 0);
+    if (placeList.length) {
+      queue.start();
+      bar.start(placeList?.length, 0);
 
-    queue.on('resolve', (data) => {
-      bar.increment();
-    });
-    queue.on('reject', (error) => console.log('reject', error));
-    queue.on('end', async () => {
-      bar.stop();
-      updateRange(customList && placeList.length > 0 ? placeList.length : Number(updateRangeValue));
-    });
+      queue.on('resolve', (data) => {
+        bar.increment();
+      });
+      queue.on('reject', (error) => console.log('reject', error));
+      queue.on('end', async () => {
+        bar.stop();
+        updateRange(customList && placeList.length > 0 ? placeList.length : Number(updateRangeValue));
+      });
+    }
   } catch (error) {
     console.log('enqueuePlaceList error', error);
   }
 };
 
 // default
-enqueuePlaceList({});
+enqueuePlaceList();
 
 // Extract specific id only
 // extractData('406982');

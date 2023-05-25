@@ -1,6 +1,6 @@
 import playwright from 'playwright';
 import {
-  RESOURCE_EXCLUSTIONS,
+  RESOURCE_EXCLUSIONS,
   baseLanguage,
   basePlacePageUrl,
   baseUrl,
@@ -35,11 +35,11 @@ export const extractData = async (id: string) => {
     });
     const context = await browser.newContext({
       storageState: 'storageState.json',
-      javaScriptEnabled: parseBoolean(process.env.JAVASCRIPT) ? true : false,
+      javaScriptEnabled: parseBoolean(process.env.JAVASCRIPT),
     });
     const page = await context.newPage();
     await page.route('**/*', (route) => {
-      return RESOURCE_EXCLUSTIONS.includes(route.request().resourceType()) ? route.abort() : route.continue();
+      return RESOURCE_EXCLUSIONS.includes(route.request().resourceType()) ? route.abort() : route.continue();
     });
 
     await page.goto(`${baseUrl}/${baseLanguage}/${basePlacePageUrl}/${id}`, {
