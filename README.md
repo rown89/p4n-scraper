@@ -1,4 +1,5 @@
 # Park4Night Scraper
+Note: *This repository is intended only as a study project*<br>
 
 Scaper built on top of the new [Park4Night](https://www.park4night.com) website with NodeJs, Playwright API and Supabase to store place detail pages data.
 
@@ -8,8 +9,6 @@ A file named `queueList.json` will be created, containing a list of IDs to be sc
 After the dequeue process is completed, the program will execute the `updateRange()` function to download the next set of IDs that will be scanned.<br>
 
 In order to retrieve data such as contacts, you need to be logged in. You can set your PHPSESSID in the [storageState file](https://github.com/rown89/p4n-scraper/blob/main/storageState.json) file or use the [login file](https://github.com/rown89/p4n-scraper/blob/main/scraper/login.ts) to dynamically set the session. *(Please note that the provided file is currently an example.)*<br>
-
-Note: *This is a study project.*
 
 ![Screenshot 2023-03-24 at 01 04 53](https://user-images.githubusercontent.com/44890500/227390807-c81b4eaa-0444-40db-b972-0203bc2ced73.png)
 
