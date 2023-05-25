@@ -7,7 +7,9 @@ Scaper built on top of the new Park4Night website with NodeJs, Playwright API an
 A file named `queueList.json` will be created, containing a list of IDs to be scanned and `extractData()` function will be enqueued to process each ID.
 After the dequeue process is completed, the program will execute the `updateRange()` function to download the next set of IDs that will be scanned.<br>
 
-In order to retrieve data such as contacts, you need to be logged in. You can set your PHPSESSID in the [storageState file](https://github.com/rown89/p4n-scraper/blob/main/storageState.json) file or use the [login file](https://github.com/rown89/p4n-scraper/blob/main/scraper/login.ts) to dynamically set the session. *(Please note that the provided file is currently an example.)*
+In order to retrieve data such as contacts, you need to be logged in. You can set your PHPSESSID in the [storageState file](https://github.com/rown89/p4n-scraper/blob/main/storageState.json) file or use the [login file](https://github.com/rown89/p4n-scraper/blob/main/scraper/login.ts) to dynamically set the session. *(Please note that the provided file is currently an example.)*<br>
+
+Note: *This is a study project.*
 
 ![Screenshot 2023-03-24 at 01 04 53](https://user-images.githubusercontent.com/44890500/227390807-c81b4eaa-0444-40db-b972-0203bc2ced73.png)
 
@@ -36,7 +38,8 @@ To successfully run this project, please make sure to include the following envi
 Disable javascript to scrape fast as hell<br>
 `JAVASCRIPT = true`<br>
 
-Enable only the scrape modules you need<br>
+Enable only the scrape modules you need or add yours<br> 
+*no get images module are currently provided*<br><br>
 `GET_TITLE = true`<br>
 `GET_CONTACTS = true`<br>
 `GET_ADDRESS = true`<br>
