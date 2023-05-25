@@ -60,7 +60,7 @@ npm run test
 
 ## Optional
 To convert geojson data to Vector Tiles use [Tippecanoe](https://github.com/mapbox/tippecanoe) from MapBox.<br>
-Under folder json_to_geojson you will find an index.ts with a `launchConversion` function who can take a json of places and trasform them to geojson with the current proprierties:<br>
+Under folder json_to_geojson you will find an index.ts with a `launchConversion` function who can take [json file of places](https://github.com/rown89/p4n-scraper/blob/main/places-example.json) and trasform them to .geojson spatial data with the current proprierties:<br>
 
 ```
 title,
