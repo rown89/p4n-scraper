@@ -11,6 +11,7 @@ import {
   extractServices,
   extractTitle,
   extractUsefulInformation,
+  extractHighestRatingDescription,
 } from '../costants';
 import {
   getTitle,
@@ -19,13 +20,21 @@ import {
   getUsefulInformation,
   getServices,
   getActivities,
+  getHighRatingDescription,
   parseBoolean,
 } from './';
 
 import { createClient } from '@supabase/supabase-js';
 import { supabaseKey, supabaseUrl } from '../costants';
 import { getLowRatingIds } from './getLowRatingIds';
+import { Configuration, OpenAIApi } from 'openai';
 
+const configuration = new Configuration({
+  organization: process.env.OPENAI_API_ORG,
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const extractData = async (id: string) => {
@@ -50,6 +59,8 @@ export const extractData = async (id: string) => {
     parseBoolean(extractContacts) && (await getContacts({ supabase, page, id }));
     parseBoolean(extractAddress) && (await getAddress({ supabase, page, id }));
     parseBoolean(extractUsefulInformation) && (await getUsefulInformation({ supabase, page, id }));
+    parseBoolean(extractHighestRatingDescription) &&
+      (await getHighRatingDescription({ supabase, page, id, openai }));
     parseBoolean(extractServices) && (await getServices({ supabase, page, id }));
     parseBoolean(extractActivities) && (await getActivities({ supabase, page, id }));
     parseBoolean(extractLowerRatingIds) && (await getLowRatingIds(page, id));

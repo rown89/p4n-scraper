@@ -4,6 +4,7 @@ export * from './getPlaceIdList';
 export * from './getActivities';
 export * from './getAddress';
 export * from './getContacts';
+export * from './getHighRatingDescription';
 export * from './getUsefuInformations';
 export * from './getServices';
 export * from './getTitle';

@@ -19,7 +19,7 @@ export const enqueuePlaceList = async (
 ) => {
   const queue = new Queue({
     concurrent: Number(concurrent),
-    interval: 20,
+    interval: 300,
     start: false,
   });
 
@@ -54,7 +54,7 @@ export const enqueuePlaceList = async (
 enqueuePlaceList();
 
 // Extract specific id only
-// extractData('406982');
+// extractData('163368');
 
 // Get Supabase id's with a custom range
 // getPlaceIdList({ customRangeFrom: 101993, customRangeTo: 101993 });

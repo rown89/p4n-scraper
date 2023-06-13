@@ -15,6 +15,7 @@ export const extractTitle = process.env.EXTRACT_TITLE;
 export const extractContacts = process.env.EXTRACT_CONTACTS;
 export const extractAddress = process.env.EXTRACT_ADDRESS;
 export const extractUsefulInformation = process.env.EXTRACT_USEFUL_INFORMATION;
+export const extractHighestRatingDescription = process.env.EXTRACT_HIGH_RATE_DESCRIPTION;
 export const extractServices = process.env.EXTRACT_SERVICES;
 export const extractActivities = process.env.EXTRACT_ACTIVITIES;
 export const extractLowerRatingIds = process.env.EXTRACT_LOWER_RATING_IDS;

@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import fs, { promises } from 'fs';
+import { OpenAIApi } from 'openai';
 import { Page } from 'playwright';
 require('dotenv').config();
 
@@ -7,6 +8,7 @@ export interface getDataFunctionProps {
   supabase: SupabaseClient;
   page: Page;
   id: string;
+  openai?: OpenAIApi;
 }
 
 export interface updateValuesByPlaceIdType {
